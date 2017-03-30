@@ -11,9 +11,9 @@ public class Command implements Serializable {
      */
     public enum Type{
         //komenda rysowania
-        DRAW,
+        SEND_MAP,
         //komenda rozłączenia
-        DISCONNECT
+        POINT
     }
 
     /**
