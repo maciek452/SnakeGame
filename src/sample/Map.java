@@ -27,6 +27,10 @@ public class Map {
 
     }
 
+    public Map(char [][] tab){
+        this.map = tab;
+    }
+
     public char chceckBlock(sample.Point point){
         return map[point.y][point.x];
     }
@@ -50,5 +54,9 @@ public class Map {
     }
     public char[][] getmap(){
         return map;
+    }
+
+    public void setMap(char[][] tab){
+        this.map = tab;
     }
 }

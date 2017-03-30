@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -22,6 +23,11 @@
                <font>
                   <Font size="24.0" />
                </font></Button>
+            <Button fx:id="start1" layoutX="123.0" layoutY="434.0" mnemonicParsing="false" onAction="#start1" text="Start2">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Button>
          </children>
       </Pane>
    </children>

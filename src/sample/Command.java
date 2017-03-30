@@ -13,7 +13,9 @@ public class Command implements Serializable {
         //komenda rysowania
         SEND_MAP,
         //komenda rozłączenia
-        POINT
+        POINT,
+
+        MAP_TAB
     }
 
     /**
@@ -26,10 +28,22 @@ public class Command implements Serializable {
      */
     Payload payload;
     Point point;
+    String string;
+    char[][] tab;
 
     public Command(Type type, Payload payload) {
         this.type = type;
         this.payload = payload;
+    }
+
+    public Command(Type type, char[][] tab){
+        this.type = type;
+        this.tab = tab;
+    }
+
+    public Command(Type type, String string){
+        this.type = type;
+        this.string = string;
     }
 
     public Command(Payload payload) {
@@ -46,6 +60,14 @@ public class Command implements Serializable {
 
     public Payload getPayload() {
         return payload;
+    }
+
+    public char[][] getTab(){
+        return tab;
+    }
+
+    public String getString(){
+        return string;
     }
 
     public Point getPoint(){

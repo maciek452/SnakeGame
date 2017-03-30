@@ -42,19 +42,7 @@ public class Controller implements Initializable{
         }catch (IOException e){
             log.info("Can't setup client on this port number.");
         }
-
-        map = new Map();
-        snake1 = new Snake(map, new Point(5, 5));
-
-        string = new String();
-        for (int i = 0; i < 20; i++) {
-            for (int j = 0; j < 20; j++)
-                string += map.chceckBlock(new sample.Point(j, i));
-            string+="\n";
-        }
-        setLabel(string);
     }
-
     @FXML
     public void handle(KeyEvent event) {
         snake1.changeDirection(event.getCode());
@@ -62,6 +50,29 @@ public class Controller implements Initializable{
 
     @FXML
     public void start(){
+        map =new Map(sendCeckMapSignal());
+        snake1 = new Snake(new Point(5, 5));
+        string = new String();
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 20; j++)
+                string += map.chceckBlock(new sample.Point(j, i));
+            string+="\n";
+        }
+        setLabel(string);
+        executor.submit(this::dzialaj);
+    }
+
+    @FXML
+    public void start1(){
+        map =new Map(sendCeckMapSignal());
+        snake1 = new Snake(new Point(7, 7));
+        string = new String();
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 20; j++)
+                string += map.chceckBlock(new sample.Point(j, i));
+            string+="\n";
+        }
+        setLabel(string);
         executor.submit(this::dzialaj);
     }
 
@@ -73,11 +84,13 @@ public class Controller implements Initializable{
 
         while (true){
             try {
-                snake1.makeMove();
 
-                //sendPoint(snake1.getPiece(0));
-                Point point = sendCeckMapSignal();
-                System.out.print(point+"\n");
+                //pobierzMape
+                map.setMap(sendCeckMapSignal());
+                //porusza sie
+                snake1.makeMove(map);
+                //wysyła mape
+                sendMap();
                 string = "";
                 for (int i = 0; i < 20; i++) {
                     for (int j = 0; j < 20; j++)
@@ -101,13 +114,12 @@ public class Controller implements Initializable{
         }
     }
 
-    public Point sendCeckMapSignal(){
+    public char[][] sendCeckMapSignal(){
         try{
             outputStream.writeObject(new Command(Command.Type.SEND_MAP));
 
             Command command = (Command) inputStream.readObject();
-            System.out.print(command.getPayload());
-            return (Point) command.getPayload();
+            return (char[][]) command.getTab();
 
         }catch (IOException e){
             log.info("Can't send point.");
@@ -116,5 +128,13 @@ public class Controller implements Initializable{
             log.info("Can't find class inputStream.");
         }
         return null;
+    }
+
+    public void sendMap(){
+        try{
+            outputStream.writeObject(new Command(Command.Type.MAP_TAB, map.getmap()));
+        }catch (IOException e){
+            log.info("Can't send map.");
+        }
     }
 }

@@ -14,11 +14,9 @@ public class Snake {
     Vector<Point> pieces = new Vector<Point>();
     Point point;
     int lenght;
-    Map map;
     Direction direction;
 
-    public Snake(Map map, Point point){
-        this.map = map;
+    public Snake(Point point){
         this.point = point;
         this.lenght = 3;
 
@@ -30,7 +28,6 @@ public class Snake {
         pieces.add(new Point(tmp));
 
         direction = Direction.RIGHT;
-        snakeUpdate();
     }
 
     public void enlargeSnake(Point point){
@@ -38,7 +35,7 @@ public class Snake {
         pieces.add(0, new Point(point));
     }
 
-    public boolean collision(Point point){
+    public boolean collision(Point point, Map map){
         if(map.chceckBlock(point)==' ')
             return false;
         else if (map.chceckBlock(point)=='.') {
@@ -68,7 +65,7 @@ public class Snake {
         }
     }
 
-    public void makeMove(){
+    public void makeMove(Map map){
         Point tmp = new Point(pieces.firstElement());
         switch (direction)
         {
@@ -87,19 +84,18 @@ public class Snake {
             default:
                 break;
         }
-
         //collision(tmp);
-        if (!collision(tmp))
+        if (!collision(tmp, map))
         {
             pieces.add(0, new Point(tmp));
             map.erasePiece(pieces.lastElement());
             pieces.removeElementAt(pieces.size()-1);
         }
 
-        snakeUpdate();
+        snakeUpdate(map);
     }
 
-    public void snakeUpdate(){
+    public void snakeUpdate(Map map){
         pieces.forEach(i->map.setSnakePiece(i));
     }
 
