@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.canvas.*?>
 <?import java.lang.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane alignment="center" hgap="10" onKeyPressed="#handle" vgap="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<GridPane alignment="center" hgap="10" onKeyPressed="#handle" prefHeight="640.0" prefWidth="1300.0" vgap="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <columnConstraints>
+      <ColumnConstraints />
       <ColumnConstraints />
    </columnConstraints>
    <rowConstraints>
       <RowConstraints />
+      <RowConstraints />
    </rowConstraints>
    <children>
-      <Pane prefHeight="500.0" prefWidth="600.0">
+      <HBox prefHeight="640.0" prefWidth="1300.0">
          <children>
-            <Label fx:id="label" layoutX="14.0" layoutY="14.0" prefHeight="420.0" prefWidth="600.0" text="Label">
-               <font>
-                  <Font name="Consolas" size="14.0" />
-               </font></Label>
-            <Button fx:id="start" layoutX="14.0" layoutY="434.0" mnemonicParsing="false" onAction="#start" text="Start">
-               <font>
-                  <Font size="24.0" />
-               </font></Button>
+            <Canvas fx:id="canvas" height="600.0" width="1200.0" />
+            <VBox prefHeight="600.0" prefWidth="100.0">
+               <children>
+                  <Button fx:id="start" mnemonicParsing="false" onAction="#start" prefHeight="31.0" prefWidth="86.0" text="Start"/>
+               </children>
+            </VBox>
          </children>
-      </Pane>
+      </HBox>
    </children>
 </GridPane>

@@ -51,6 +51,7 @@ public class Map {
     public void setSnakePiece(Point point){
         map[point.y][point.x] = 'O';
     }
+
     public char[][] getmap(){
         return map;
     }

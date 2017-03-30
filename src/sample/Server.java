@@ -20,6 +20,8 @@ import static java.lang.String.format;
  */
 public class Server{
 
+    static int N = 20, M = 20;
+
     private static Logger log = Logger.getLogger(Server.class.getCanonicalName());
     static ExecutorService executor = Executors.newFixedThreadPool(3);
     private static final int PORT = 1337;
@@ -99,10 +101,10 @@ public class Server{
                 }
                 if(command.getType()== Command.Type.SEND_MAP_STRING){
                     String string = new String();
-                    for (int i = 0; i < 20; i++) {
-                        for (int j = 0; j < 20; j++)
+                    for (int i = 0; i < N; i++) {
+                        for (int j = 0; j < M; j++)
                             string += map.chceckBlock(new sample.Point(j, i));
-                        string+="\n";
+                        //string+="\n";
                     }
                     log.info("Sending map");
                     outputStream.writeObject(new Command(string));
