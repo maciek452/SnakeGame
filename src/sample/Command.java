@@ -24,7 +24,9 @@ public class Command implements Serializable {
         //zmiana kierunku
         CHANGE_DIRECTION,
 
-        SEND_MAP_STRING
+        SEND_MAP_STRING,
+
+        GET_DIMENSIONS
 
 
     }
@@ -41,6 +43,8 @@ public class Command implements Serializable {
     Point point;
     String string;
     KeyCode keyCode;
+    int ilosc, N;
+    double rozmiar_bloku;
     char[][] tab;
 
     public Command(Type type, Payload payload) {
@@ -64,6 +68,12 @@ public class Command implements Serializable {
 
     public Command(Payload payload) {
         this.payload = payload;
+    }
+
+    public Command(int ilosc, int N, double block_size){
+        this.ilosc = ilosc;
+        this.N = N;
+        this.rozmiar_bloku = block_size;
     }
 
     public Command(Type type) {

@@ -9,13 +9,19 @@ import java.util.Random;
 
 public class Map {
 
-    static int N = 20, M = 20;
 
-    char[][] map = new char[N][M];
-
+    char[][] map;
+    int N, M;
     Random rand = new Random();
 
     public Map(){
+
+    }
+
+    public Map(int N, int M){
+        map  =new char[N][M];
+        this.N = N;
+        this.M = M;
         for(int i = 0; i < N; i++ ) {
             for (int j = 0; j < M; j++) {
                 if (i == 0 || j == 0 || i == N - 1 || j == M - 1)

@@ -7,10 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 public class Main extends Application{
     private Scene scene;
@@ -22,7 +19,7 @@ public class Main extends Application{
         Group root1 = new Group();
         GraphicsContext gc = controller.canvas.getGraphicsContext2D();
         primaryStage.setTitle("Snake");
-        controller.drawShapes(gc);
+       controller.drawShapes(gc);
 
         primaryStage.setScene(new Scene(root));
         primaryStage.setWidth(1400);

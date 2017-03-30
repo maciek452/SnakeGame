@@ -20,7 +20,9 @@ import static java.lang.String.format;
  */
 public class Server{
 
-    static int N = 20, M = 20;
+    static int canvasX = 1200, canvasY = 600, N = 31;
+    static double rozmiar_bloku = canvasY / N;
+    static int ilosc = (int) (canvasX/rozmiar_bloku);
 
     private static Logger log = Logger.getLogger(Server.class.getCanonicalName());
     static ExecutorService executor = Executors.newFixedThreadPool(3);
@@ -34,7 +36,7 @@ public class Server{
     private static Snake snake1, snake2, snake3;
 
     public static void main(String[] args)throws IOException{
-        map = new Map();
+        map = new Map(N, ilosc);
 
         log.info("Server starts.");
         while(true) {
@@ -85,6 +87,10 @@ public class Server{
                 if(command.getType()== Command.Type.SEND_MAP){
                     outputStream.writeObject(new Command(Command.Type.MAP_TAB, map.getmap()));
                 }
+
+                if(command.getType()== Command.Type.GET_DIMENSIONS){
+                    outputStream.writeObject(new Command(ilosc, N, rozmiar_bloku));
+                }
                 if(command.getType() == Command.Type.POINT){
                     Point point = (Point) command.getPayload();
                     log.info(format("Receiving point: %s, %s", point.x, point.y));
@@ -102,7 +108,7 @@ public class Server{
                 if(command.getType()== Command.Type.SEND_MAP_STRING){
                     String string = new String();
                     for (int i = 0; i < N; i++) {
-                        for (int j = 0; j < M; j++)
+                        for (int j = 0; j < ilosc; j++)
                             string += map.chceckBlock(new sample.Point(j, i));
                         //string+="\n";
                     }

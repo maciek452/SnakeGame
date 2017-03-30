@@ -20,6 +20,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
+import static java.lang.String.format;
+
 public class Controller implements Initializable{
 
     @FXML
@@ -35,6 +37,9 @@ public class Controller implements Initializable{
     private ObjectInputStream inputStream;
     private GraphicsContext gc;
 
+    int ilosc, matrix_size;
+    double rozmiar_bloku;
+
     private static final int PORT = 1337;
 
     @Override
@@ -49,7 +54,9 @@ public class Controller implements Initializable{
             log.info("Can't setup client on this port number.");
         }
 
-        map = new Map(sendCeckMapSignal());
+
+        //map = new Map(sendCeckMapSignal());
+        getDimensionsFromServer();
         string = getStringFromServer();
     }
     @FXML
@@ -100,6 +107,25 @@ public class Controller implements Initializable{
         }
     }
 
+    public void getDimensionsFromServer(){
+        try{
+            outputStream.writeObject(new Command(Command.Type.GET_DIMENSIONS));
+
+            Command command = (Command) inputStream.readObject();
+            ilosc = command.ilosc;
+            matrix_size = command.N;
+            rozmiar_bloku = command.rozmiar_bloku;
+
+            log.info(format("ilosc = %d, matrix= %d, rozmiar_b = %f", ilosc, matrix_size, rozmiar_bloku));
+        }catch (IOException e){
+            log.info("Can't send point.");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            log.info("Can't find class inputStream.");
+        }
+    }
+
+
     public char[][] sendCeckMapSignal(){
         try{
             outputStream.writeObject(new Command(Command.Type.SEND_MAP));
@@ -114,7 +140,6 @@ public class Controller implements Initializable{
         }
         return null;
     }
-
     public String getStringFromServer(){
         try{
             outputStream.writeObject(new Command(Command.Type.SEND_MAP_STRING));
@@ -137,47 +162,44 @@ public class Controller implements Initializable{
             log.info("Can't send map.");
         }
     }
+
     public void drawShapes(GraphicsContext gc) {
         this.gc = gc;
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
-        final int matrix_size = 30;
         Image earth = new Image( "File:src/Graphics/Grass.png" );
         Image wall = new Image( "File:src/Graphics/wall.png" );
         Image tail = new Image( "File:src/Graphics/snake.png" );
         Image head = new Image( "File:src/Graphics/snakeHead.png" );
         Image kox = new Image( "File:src/Graphics/kox.png" );
-        double rozmiar_bloku = this.canvas.getHeight() / matrix_size;
-        int ilosc = (int)(this.canvas.getWidth()/rozmiar_bloku);
         gc.setFill(Color.GREEN);
         gc.setStroke(Color.DARKGREEN);
-        double x = (this.canvas.getWidth()-ilosc*rozmiar_bloku)/2;
+        double x = 0;
         double y = 0;
         gc.drawImage(earth, 0, 0, this.canvas.getWidth(), this.canvas.getHeight());
-        for(int i = 0; i < 20; i++)
+        for(int i = 0; i < matrix_size; i++)
         {
-            for(int j = 0; j < 20; j++)
+            for(int j = 0; j < ilosc; j++)
             {
-                //if(map.chceckBlock(new Point(i,j)) == '#')
-                if(string.charAt(i*20+j)=='#')
+                if(string.charAt(i*ilosc+j)=='#')
                 {
                     gc.drawImage(wall, x, y, rozmiar_bloku, rozmiar_bloku);
                 }
-                if(string.charAt(i*20+j)==' ')
+                if(string.charAt(i*ilosc+j)==' ')
                 {
                     gc.strokeRect(x, y, rozmiar_bloku, rozmiar_bloku);
                 }
-                if(string.charAt(i*20+j)=='O')
+                if(string.charAt(i*ilosc+j)=='O')
                 {
                     gc.drawImage(head, x, y, rozmiar_bloku, rozmiar_bloku);
                 }
-                if(string.charAt(i*20+j)=='.')
+                if(string.charAt(i*ilosc+j)=='.')
                 {
                     gc.drawImage(kox, x, y, rozmiar_bloku, rozmiar_bloku);
                 }
                 x += rozmiar_bloku;
             }
-            x = (this.canvas.getWidth() - ilosc * rozmiar_bloku)/2;
+            x = 0;
             y += rozmiar_bloku;
         }
     }
