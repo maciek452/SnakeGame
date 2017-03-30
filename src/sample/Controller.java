@@ -45,34 +45,23 @@ public class Controller implements Initializable{
     }
     @FXML
     public void handle(KeyEvent event) {
-        snake1.changeDirection(event.getCode());
+        //snake1.changeDirection(event.getCode());
+        try {
+            outputStream.writeObject(new Command(Command.Type.CHANGE_DIRECTION, event.getCode()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @FXML
     public void start(){
-        map =new Map(sendCeckMapSignal());
-        snake1 = new Snake(new Point(5, 5));
-        string = new String();
-        for (int i = 0; i < 20; i++) {
-            for (int j = 0; j < 20; j++)
-                string += map.chceckBlock(new sample.Point(j, i));
-            string+="\n";
+        try {
+            outputStream.writeObject(new Command(Command.Type.START));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        setLabel(string);
-        executor.submit(this::dzialaj);
-    }
 
-    @FXML
-    public void start1(){
-        map =new Map(sendCeckMapSignal());
-        snake1 = new Snake(new Point(7, 7));
-        string = new String();
-        for (int i = 0; i < 20; i++) {
-            for (int j = 0; j < 20; j++)
-                string += map.chceckBlock(new sample.Point(j, i));
-            string+="\n";
-        }
-        setLabel(string);
         executor.submit(this::dzialaj);
     }
 
@@ -84,21 +73,11 @@ public class Controller implements Initializable{
 
         while (true){
             try {
-
                 //pobierzMape
-                map.setMap(sendCeckMapSignal());
-                //porusza sie
-                snake1.makeMove(map);
-                //wysyła mape
-                sendMap();
-                string = "";
-                for (int i = 0; i < 20; i++) {
-                    for (int j = 0; j < 20; j++)
-                        string += map.chceckBlock(new Point(j, i));
-                    string+="\n";
-                }
+                //map.setMap(sendCeckMapSignal());
+                string = getStringFromServer();
                 Platform.runLater(()->setLabel(string));
-                Thread.sleep(200);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -120,6 +99,20 @@ public class Controller implements Initializable{
 
             Command command = (Command) inputStream.readObject();
             return (char[][]) command.getTab();
+        }catch (IOException e){
+            log.info("Can't send point.");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            log.info("Can't find class inputStream.");
+        }
+        return null;
+    }
+
+    public String getStringFromServer(){
+        try{
+            outputStream.writeObject(new Command(Command.Type.SEND_MAP_STRING));
+            Command command = (Command) inputStream.readObject();
+            return (String) command.getString();
 
         }catch (IOException e){
             log.info("Can't send point.");

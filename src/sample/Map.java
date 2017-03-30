@@ -24,7 +24,6 @@ public class Map {
             }
         }
         makeDot();
-
     }
 
     public Map(char [][] tab){

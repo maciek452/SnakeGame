@@ -1,5 +1,8 @@
 package sample;
 
+import com.sun.javafx.scene.traversal.Direction;
+import javafx.scene.input.KeyCode;
+
 import java.io.Serializable;
 
 /**
@@ -14,8 +17,16 @@ public class Command implements Serializable {
         SEND_MAP,
         //komenda rozłączenia
         POINT,
+        //przesłanie mapy
+        MAP_TAB,
+        //rozpoczęcie gry
+        START,
+        //zmiana kierunku
+        CHANGE_DIRECTION,
 
-        MAP_TAB
+        SEND_MAP_STRING
+
+
     }
 
     /**
@@ -29,6 +40,7 @@ public class Command implements Serializable {
     Payload payload;
     Point point;
     String string;
+    KeyCode keyCode;
     char[][] tab;
 
     public Command(Type type, Payload payload) {
@@ -41,9 +53,13 @@ public class Command implements Serializable {
         this.tab = tab;
     }
 
-    public Command(Type type, String string){
-        this.type = type;
+    public Command(String string){
         this.string = string;
+    }
+
+    public Command(Type type, KeyCode keyCode){
+        this.type = type;
+        this.keyCode = keyCode;
     }
 
     public Command(Payload payload) {
@@ -72,5 +88,9 @@ public class Command implements Serializable {
 
     public Point getPoint(){
         return point;
+    }
+
+    public KeyCode getKeyCode(){
+        return keyCode;
     }
 }

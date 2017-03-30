@@ -15,6 +15,7 @@ public class Snake {
     Point point;
     int lenght;
     Direction direction;
+    boolean enabled;
 
     public Snake(Point point){
         this.point = point;
@@ -27,6 +28,7 @@ public class Snake {
         tmp.x-=1;
         pieces.add(new Point(tmp));
 
+        enabled = false;
         direction = Direction.RIGHT;
     }
 
@@ -105,5 +107,13 @@ public class Snake {
 
     public Point getPiece(int index){
         return pieces.get(index);
+    }
+
+    public void enable(){
+        enabled = true;
+    }
+
+    public void disable(){
+        enabled = false;
     }
 }

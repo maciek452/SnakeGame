@@ -22,7 +22,6 @@ public class Main extends Application{
             Platform.exit();
             System.exit(0);
         });
-
     }
 
     public static void main(String[] args) {
