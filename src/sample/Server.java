@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -22,43 +23,56 @@ public class Server{
     private static Logger log = Logger.getLogger(Server.class.getCanonicalName());
     static ExecutorService executor = Executors.newFixedThreadPool(3);
     private static final int PORT = 1337;
+    private static final int PORT1 = 1338;
+    private static Map map;
 
-    //private Map map;
+    static Socket socket;
 
     private ObjectInputStream inputStream;
 
-
     public static void main(String[] args)throws IOException{
+        map = new Map();
         log.info("Server starts.");
         try(ServerSocket serverSocket = new ServerSocket(PORT)){
-            final Socket socket = serverSocket.accept();
+
+            socket = serverSocket.accept();
+
             //Oczekiwania na połączenie od klienta po stronie serwerowej
-            executor.submit(()->waitForClient(serverSocket, socket));
+            executor.submit(()->waitForClient());
 
         }catch (IOException e){
             log.info("Can't setup server on this port number.");
         }
     }
 
-    private static void waitForClient(ServerSocket serverSocket, Socket socket) {
+    private static void waitForClient() {
         try {
             //Oczekiwania na połączenie od klienta po stronie serwerowej
             ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
-            executor.submit(()->receiveCommands(inputStream));
+            ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+
+            executor.submit(()->receiveCommands(inputStream, outputStream));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static void receiveCommands(ObjectInputStream inputStream){
+    private static void receiveCommands(ObjectInputStream inputStream, ObjectOutputStream outputStream){
 
         try {
             while (true) {
                 //oczekiwanie na kolejną komendę
                 //log.info("Waiting for point.");
                 Command command = (Command) inputStream.readObject();
-                Point point = (Point) command.getPayload();
-                log.info(format("Receiving point: %s, %s", point.x, point.y));
+                if(command.getType()== Command.Type.SEND_MAP){
+                    outputStream.writeObject(new Command(Command.Type.POINT, new Point(10, 10)));
+
+                }else {
+                    if(command.getType() == Command.Type.POINT){
+                        Point point = (Point) command.getPayload();
+                        log.info(format("Receiving point: %s, %s", point.x, point.y));
+                    }
+                }
             }
         } catch (EOFException | SocketException e) {
             System.out.println("Nastąpiło rozłączenie");

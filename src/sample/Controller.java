@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.URL;
@@ -26,6 +27,7 @@ public class Controller implements Initializable{
     private static Logger log = Logger.getLogger(Server.class.getCanonicalName());
     private Socket socket;
     private ObjectOutputStream outputStream;
+    private ObjectInputStream inputStream;
 
     private static final int PORT = 1337;
 
@@ -35,8 +37,10 @@ public class Controller implements Initializable{
         try {
             socket = new Socket("127.0.0.1", PORT);
             outputStream = new ObjectOutputStream(socket.getOutputStream());
-        }catch (IOException e){
+            inputStream = new ObjectInputStream(socket.getInputStream());
 
+        }catch (IOException e){
+            log.info("Can't setup client on this port number.");
         }
 
         map = new Map();
@@ -71,8 +75,9 @@ public class Controller implements Initializable{
             try {
                 snake1.makeMove();
 
-                sendPoint(snake1.getPiece(0));
-
+                //sendPoint(snake1.getPiece(0));
+                Point point = sendCeckMapSignal();
+                System.out.print(point+"\n");
                 string = "";
                 for (int i = 0; i < 20; i++) {
                     for (int j = 0; j < 20; j++)
@@ -96,4 +101,20 @@ public class Controller implements Initializable{
         }
     }
 
+    public Point sendCeckMapSignal(){
+        try{
+            outputStream.writeObject(new Command(Command.Type.SEND_MAP));
+
+            Command command = (Command) inputStream.readObject();
+            System.out.print(command.getPayload());
+            return (Point) command.getPayload();
+
+        }catch (IOException e){
+            log.info("Can't send point.");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            log.info("Can't find class inputStream.");
+        }
+        return null;
+    }
 }
