@@ -190,9 +190,13 @@ public class Controller implements Initializable{
                 {
                     gc.strokeRect(x, y, rozmiar_bloku, rozmiar_bloku);
                 }
-                if(string.charAt(i*ilosc+j)=='O')
+                if(string.charAt(i*ilosc+j)=='H')
                 {
                     gc.drawImage(head_pic, x, y, rozmiar_bloku, rozmiar_bloku);
+                }
+                if(string.charAt(i*ilosc+j)=='O')
+                {
+                    gc.drawImage(tail_pic, x, y, rozmiar_bloku, rozmiar_bloku);
                 }
                 if(string.charAt(i*ilosc+j)=='.')
                 {

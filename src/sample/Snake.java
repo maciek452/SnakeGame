@@ -104,6 +104,7 @@ public class Snake {
                 map.setSnakePiece(piece, 'H');
             else
                 map.setSnakePiece(piece, 'O');
+            ++i;
         }
 
         //pieces.forEach(i->map.setSnakePiece(i));
