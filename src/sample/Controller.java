@@ -39,6 +39,8 @@ public class Controller implements Initializable{
 
     int ilosc, matrix_size;
     double rozmiar_bloku;
+    Image earth_pic, wall_pic, tail_pic, headUp_pic,
+            headDown_pic, headLeft_pic, headRight_pic, apple_pic;
 
     private static final int PORT = 1337;
 
@@ -163,44 +165,57 @@ public class Controller implements Initializable{
             log.info("Can't send map.");
         }
     }
+    public void LoadGraphics() {
+        earth_pic = new Image( "File:src/Graphics/Grass.png" );
+        wall_pic = new Image( "File:src/Graphics/wall.png" );
+        tail_pic = new Image( "File:src/Graphics/snake.png" );
+        headUp_pic = new Image( "File:src/Graphics/snakeHeadUp.png" );
+        headDown_pic = new Image( "File:src/Graphics/snakeHeadDown.png" );
+        headLeft_pic = new Image( "File:src/Graphics/snakeHeadLeft.png" );
+        headRight_pic = new Image( "File:src/Graphics/snakeHeadRight.png" );
+        apple_pic = new Image( "File:src/Graphics/Apple.png" );
+    }
 
     public void drawShapes(GraphicsContext gc) {
         this.gc = gc;
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
-        Image earth_pic = new Image( "File:src/Graphics/Grass.png" );
-        Image wall_pic = new Image( "File:src/Graphics/wall.png" );
-        Image tail_pic = new Image( "File:src/Graphics/snake.png" );
-        Image head_pic = new Image( "File:src/Graphics/snakeHead.png" );
-        Image apple_pic = new Image( "File:src/Graphics/Apple.png" );
         gc.setFill(Color.GREEN);
         gc.setStroke(Color.DARKGREEN);
         double x = 0;
         double y = 0;
         gc.drawImage(earth_pic, 0, 0, this.canvas.getWidth(), this.canvas.getHeight());
+
         for(int i = 0; i < matrix_size; i++)
         {
             for(int j = 0; j < ilosc; j++)
             {
-                if(string.charAt(i*ilosc+j)=='#')
+                switch(string.charAt(i*ilosc+j))
                 {
-                    gc.drawImage(wall_pic, x, y, rozmiar_bloku, rozmiar_bloku);
-                }
-                if(string.charAt(i*ilosc+j)==' ')
-                {
-                    gc.strokeRect(x, y, rozmiar_bloku, rozmiar_bloku);
-                }
-                if(string.charAt(i*ilosc+j)=='H')
-                {
-                    gc.drawImage(head_pic, x, y, rozmiar_bloku, rozmiar_bloku);
-                }
-                if(string.charAt(i*ilosc+j)=='O')
-                {
-                    gc.drawImage(tail_pic, x, y, rozmiar_bloku, rozmiar_bloku);
-                }
-                if(string.charAt(i*ilosc+j)=='.')
-                {
-                    gc.drawImage(apple_pic, x, y, rozmiar_bloku, rozmiar_bloku);
+                    case '#':
+                        gc.drawImage(wall_pic, x, y, rozmiar_bloku, rozmiar_bloku);
+                        break;
+                    case ' ':
+                        gc.strokeRect(x, y, rozmiar_bloku, rozmiar_bloku);
+                        break;
+                    case '>':
+                        gc.drawImage(headRight_pic, x, y, rozmiar_bloku, rozmiar_bloku);
+                        break;
+                    case '<':
+                        gc.drawImage(headLeft_pic, x, y, rozmiar_bloku, rozmiar_bloku);
+                        break;
+                    case '^':
+                        gc.drawImage(headUp_pic, x, y, rozmiar_bloku, rozmiar_bloku);
+                        break;
+                    case 'V':
+                        gc.drawImage(headDown_pic, x, y, rozmiar_bloku, rozmiar_bloku);
+                        break;
+                    case 'O':
+                        gc.drawImage(tail_pic, x, y, rozmiar_bloku, rozmiar_bloku);
+                        break;
+                    case '.':
+                        gc.drawImage(apple_pic, x, y, rozmiar_bloku, rozmiar_bloku);
+                        break;
                 }
                 x += rozmiar_bloku;
             }
