@@ -14,7 +14,7 @@ public class Snake {
     Point point;
     int lenght;
     Direction direction;
-    boolean enabled;
+    boolean enabled = false;
 
     public Snake(Point point){
         this.point = point;
@@ -47,7 +47,7 @@ public class Snake {
         else return true;
     }
 
-    public void changeDirection(KeyCode key){
+    public synchronized void changeDirection(KeyCode key){
         switch (key){
             case A:
                 if(direction!=Direction.RIGHT)
@@ -100,8 +100,7 @@ public class Snake {
         snakeUpdate(map);
     }
 
-    public void snakeUpdate(Map map){
-
+    public synchronized void snakeUpdate(Map map){
         int i = 0;
         for (Point piece: pieces){
             if(i == 0) {
@@ -124,14 +123,6 @@ public class Snake {
                 map.setSnakePiece(piece, 'O');
             ++i;
         }
-    }
-
-    public int getLenght(){
-        return lenght;
-    }
-
-    public Point getPiece(int index){
-        return pieces.get(index);
     }
 
     public void enable(){

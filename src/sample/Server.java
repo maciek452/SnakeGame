@@ -1,6 +1,9 @@
 package sample;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -47,7 +50,6 @@ public class Server{
 
     private static TimerTask runSnake(Snake snake){
         return new TimerTask() {
-
             @Override
             public void run() {
                 snake.makeMove(map);
@@ -59,24 +61,28 @@ public class Server{
         try {
             DataInputStream inputStream = new DataInputStream(socket.getInputStream());
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
-            log.info("Client connected.");
+            log.info("Client "+numberOfSnakes+" connected.");
 
-            Timer timer = new Timer();//create a new Timer
+            Timer timer = new Timer();
             switch (numberOfSnakes){
                 case 0:
+                    log.info("Client "+numberOfSnakes+" starts game.");
                     snake1 = new Snake(new Point(5,5));
                     executor.submit(()->receiveCommands(inputStream, outputStream, snake1));
                     timer.scheduleAtFixedRate(runSnake(snake1), 30, 100);
+                    numberOfSnakes++;
                     break;
                 case 1:
                     snake2 = new Snake(new Point(7,7));
                     executor.submit(()->receiveCommands(inputStream, outputStream, snake2));
                     timer.scheduleAtFixedRate(runSnake(snake2), 30, 100);
+                    numberOfSnakes++;
                     break;
                 case 2:
                     snake3 = new Snake(new Point(5,9));
                     executor.submit(()->receiveCommands(inputStream, outputStream, snake3));
                     timer.scheduleAtFixedRate(runSnake(snake3), 30, 100);
+                    numberOfSnakes++;
                     break;
                 default:
                     log.info("Server has arleady 3 players.");
@@ -88,17 +94,18 @@ public class Server{
         }
     }
 
-    private synchronized static void receiveCommands(DataInputStream inputStream, DataOutputStream outputStream, Snake snake){
+    private static void receiveCommands(DataInputStream inputStream, DataOutputStream outputStream, Snake snake){
 
         try {
+            log.info("Reciving from client"+numberOfSnakes);
+
             while (true) {
                 //oczekiwanie na kolejną komendę
-                byte[] message = new byte[1];
+
                 int length = inputStream.readInt();
-                if(length>0){
-                    message = new byte[length];
-                    inputStream.readFully(message, 0, message.length);
-                }
+                byte[] message = new byte[length];
+                inputStream.readFully(message, 0, message.length);
+
                 Command command = (Command) Serializer.deserialize(message);
 
                 switch (command.getType()){
@@ -123,14 +130,10 @@ public class Server{
                             for (int j = 0; j < ilosc; j++)
                                 string += map.chceckBlock(new sample.Point(j, i));
                         }
-                        log.info("Sending map");
+                        //log.info("Sending map");
                         message = Serializer.serialize(new Command(string));
                         outputStream.writeInt(message.length);
                         outputStream.write(message);
-                }
-                if(snake.enabled) {
-                    //log.info("Making move");
-                    //snake.makeMove(map);
                 }
             }
         } catch (EOFException | SocketException e) {

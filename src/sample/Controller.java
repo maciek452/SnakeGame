@@ -47,6 +47,7 @@ public class Controller implements Initializable{
             socket = new Socket(
                     "127.0.0.1"
                     //"192.168.0.98"
+                    //"192.168.0.97"
                     , PORT);
             outputStream = new DataOutputStream(socket.getOutputStream());
             inputStream = new DataInputStream(socket.getInputStream());
@@ -96,21 +97,11 @@ public class Controller implements Initializable{
         };
 
         Timer timer = new Timer();//create a new Timer
-        Timer timer2 = new Timer();
 
         timer.scheduleAtFixedRate(timerTaskGettingMap, 30, 100);
-        timer2.scheduleAtFixedRate(timerTaskDrowingMap, 30, 100);
+        timer.scheduleAtFixedRate(timerTaskDrowingMap, 30, 100);
 
         //executor.submit(this::gettingMapAndDrowing);
-    }
-
-    void gettingMapAndDrowing(){
-        while (true){
-            //pobierzMape
-            string = getStringFromServer();
-            drawShapes(gc);
-        }
-
     }
 
     public void getDimensionsFromServer(){
@@ -138,7 +129,7 @@ public class Controller implements Initializable{
         }
     }
 
-    public String getStringFromServer(){
+    public synchronized String getStringFromServer(){
         try{
             byte[] message = Serializer.serialize(new Command(Command.Type.SEND_MAP_STRING));
             outputStream.writeInt(message.length);
@@ -172,7 +163,7 @@ public class Controller implements Initializable{
         apple_pic = new Image( "File:src/Graphics/Apple.png" );
     }
 
-    public void drawShapes(GraphicsContext gc) {
+    public synchronized void drawShapes(GraphicsContext gc) {
         this.gc = gc;
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
