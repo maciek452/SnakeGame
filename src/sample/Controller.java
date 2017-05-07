@@ -46,7 +46,8 @@ public class Controller implements Initializable{
     public void initialize(URL location, ResourceBundle resources){
 
         try {
-            socket = new Socket("127.0.0.1", PORT);
+            socket = new Socket(/*"127.0.0.1"/*/
+                     "192.168.0.98", PORT);
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             inputStream = new ObjectInputStream(socket.getInputStream());
 

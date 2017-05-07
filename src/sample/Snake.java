@@ -3,7 +3,6 @@ package sample;
 import com.sun.javafx.scene.traversal.Direction;
 import javafx.scene.input.KeyCode;
 
-import java.awt.*;
 import java.util.Vector;
 
 /**
@@ -98,7 +97,16 @@ public class Snake {
     }
 
     public void snakeUpdate(Map map){
-        pieces.forEach(i->map.setSnakePiece(i));
+
+        int i = 0;
+        for (Point piece: pieces){
+            if(i == 0)
+                map.setSnakePiece(piece, 'H');
+            else
+                map.setSnakePiece(piece, 'O');
+        }
+
+        //pieces.forEach(i->map.setSnakePiece(i));
     }
 
     public int getLenght(){
