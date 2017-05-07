@@ -1,11 +1,9 @@
 package sample;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
@@ -16,6 +14,8 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
@@ -27,9 +27,7 @@ public class Controller implements Initializable{
     @FXML
     public Canvas canvas;
     @FXML
-    public Label label;
     private String string;
-    public Map map;
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     private static Logger log = Logger.getLogger(Server.class.getCanonicalName());
     private Socket socket;
@@ -59,8 +57,6 @@ public class Controller implements Initializable{
             log.info("Can't setup client on this port number.");
         }
 
-
-        //map = new Map(sendCeckMapSignal());
         getDimensionsFromServer();
         string = getStringFromServer();
     }
@@ -80,36 +76,30 @@ public class Controller implements Initializable{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        executor.submit(this::dzialaj);
-    }
 
-    public void setLabel(String string){
-        //label.setText(string);
-    }
+        TimerTask timerTask = new TimerTask() {
 
-    void dzialaj(){
-        while (true){
-            try {
-                //pobierzMape
-                //map.setMap(sendCeckMapSignal());
+            @Override
+            public void run() {
                 string = getStringFromServer();
-
                 drawShapes(gc);
-                Platform.runLater(()->setLabel(string));
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
-        }
+        };
 
+        Timer timer = new Timer();//create a new Timer
+
+        timer.scheduleAtFixedRate(timerTask, 30, 100);
+
+        //executor.submit(this::gettingMapAndDrowing);
     }
 
-    public void sendPoint(Point point){
-        try{
-            outputStream.writeObject(new Command(point));
-        }catch (IOException e){
-            log.info("Can't send point.");
+    void gettingMapAndDrowing(){
+        while (true){
+            //pobierzMape
+            string = getStringFromServer();
+            drawShapes(gc);
         }
+
     }
 
     public void getDimensionsFromServer(){
@@ -145,13 +135,6 @@ public class Controller implements Initializable{
         return null;
     }
 
-    public void sendMap(){
-        try{
-            outputStream.writeObject(new Command(Command.Type.MAP_TAB, map.getmap()));
-        }catch (IOException e){
-            log.info("Can't send map.");
-        }
-    }
     public void LoadGraphics() {
         earth_pic = new Image( "File:src/Graphics/Grass.png" );
         wall_pic = new Image( "File:src/Graphics/wall.png" );

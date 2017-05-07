@@ -50,16 +50,20 @@ public class Snake {
     public void changeDirection(KeyCode key){
         switch (key){
             case A:
-                direction = Direction.LEFT;
+                if(direction!=Direction.RIGHT)
+                    direction = Direction.LEFT;
                 break;
             case S:
-                direction = Direction.DOWN;
+                if(direction!=Direction.UP)
+                    direction = Direction.DOWN;
                 break;
             case D:
-                direction = Direction.RIGHT;
+                if(direction!=Direction.LEFT)
+                    direction = Direction.RIGHT;
                 break;
             case W:
-                direction = Direction.UP;
+                if(direction!=Direction.DOWN)
+                    direction = Direction.UP;
                 break;
             default:
                 break;
