@@ -25,7 +25,6 @@ public class Command implements Serializable {
 
         GET_DIMENSIONS
 
-
     }
 
     /**
@@ -44,15 +43,6 @@ public class Command implements Serializable {
     double rozmiar_bloku;
     char[][] tab;
 
-    public Command(Type type, Payload payload) {
-        this.type = type;
-        this.payload = payload;
-    }
-
-    public Command(Type type, char[][] tab){
-        this.type = type;
-        this.tab = tab;
-    }
 
     public Command(String string){
         this.string = string;
@@ -61,10 +51,6 @@ public class Command implements Serializable {
     public Command(Type type, KeyCode keyCode){
         this.type = type;
         this.keyCode = keyCode;
-    }
-
-    public Command(Payload payload) {
-        this.payload = payload;
     }
 
     public Command(int ilosc, int N, double block_size){

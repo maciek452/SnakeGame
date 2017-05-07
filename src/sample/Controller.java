@@ -79,18 +79,27 @@ public class Controller implements Initializable{
             e.printStackTrace();
         }
 
-        TimerTask timerTask = new TimerTask() {
+        TimerTask timerTaskGettingMap = new TimerTask() {
 
             @Override
             public void run() {
                 string = getStringFromServer();
+            }
+        };
+
+        TimerTask timerTaskDrowingMap = new TimerTask() {
+
+            @Override
+            public void run() {
                 drawShapes(gc);
             }
         };
 
         Timer timer = new Timer();//create a new Timer
+        Timer timer2 = new Timer();
 
-        timer.scheduleAtFixedRate(timerTask, 30, 100);
+        timer.scheduleAtFixedRate(timerTaskGettingMap, 30, 100);
+        timer2.scheduleAtFixedRate(timerTaskDrowingMap, 30, 100);
 
         //executor.submit(this::gettingMapAndDrowing);
     }

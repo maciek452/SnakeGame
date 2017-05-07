@@ -4,6 +4,8 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
@@ -18,7 +20,7 @@ public class Server{
     static int ilosc = (int) (canvasX/rozmiar_bloku);
 
     private static Logger log = Logger.getLogger(Server.class.getCanonicalName());
-    static ExecutorService executor = Executors.newFixedThreadPool(3);
+    static ExecutorService executor = Executors.newFixedThreadPool(6);
     private static final int PORT = 1337;
 
     private static Map map;
@@ -43,23 +45,38 @@ public class Server{
         }
     }
 
+    private static TimerTask runSnake(Snake snake){
+        return new TimerTask() {
+
+            @Override
+            public void run() {
+                snake.makeMove(map);
+            }
+        };
+    }
+
     private static void waitForClient() {
         try {
             DataInputStream inputStream = new DataInputStream(socket.getInputStream());
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             log.info("Client connected.");
+
+            Timer timer = new Timer();//create a new Timer
             switch (numberOfSnakes){
                 case 0:
                     snake1 = new Snake(new Point(5,5));
                     executor.submit(()->receiveCommands(inputStream, outputStream, snake1));
+                    timer.scheduleAtFixedRate(runSnake(snake1), 30, 100);
                     break;
                 case 1:
                     snake2 = new Snake(new Point(7,7));
                     executor.submit(()->receiveCommands(inputStream, outputStream, snake2));
+                    timer.scheduleAtFixedRate(runSnake(snake2), 30, 100);
                     break;
                 case 2:
                     snake3 = new Snake(new Point(5,9));
                     executor.submit(()->receiveCommands(inputStream, outputStream, snake3));
+                    timer.scheduleAtFixedRate(runSnake(snake3), 30, 100);
                     break;
                 default:
                     log.info("Server has arleady 3 players.");
@@ -71,7 +88,7 @@ public class Server{
         }
     }
 
-    private static void receiveCommands(DataInputStream inputStream, DataOutputStream outputStream, Snake snake){
+    private synchronized static void receiveCommands(DataInputStream inputStream, DataOutputStream outputStream, Snake snake){
 
         try {
             while (true) {
@@ -113,7 +130,7 @@ public class Server{
                 }
                 if(snake.enabled) {
                     //log.info("Making move");
-                    snake.makeMove(map);
+                    //snake.makeMove(map);
                 }
             }
         } catch (EOFException | SocketException e) {
