@@ -100,8 +100,22 @@ public class Snake {
 
         int i = 0;
         for (Point piece: pieces){
-            if(i == 0)
-                map.setSnakePiece(piece, 'H');
+            if(i == 0) {
+                switch (direction) {
+                    case RIGHT:
+                        map.setSnakePiece(piece, '>');
+                        break;
+                    case LEFT:
+                        map.setSnakePiece(piece, '<');
+                        break;
+                    case UP:
+                        map.setSnakePiece(piece, '^');
+                        break;
+                    case DOWN:
+                        map.setSnakePiece(piece, 'V');
+                        break;
+                }
+            }
             else
                 map.setSnakePiece(piece, 'O');
             ++i;
