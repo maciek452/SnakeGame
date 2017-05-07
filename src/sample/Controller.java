@@ -8,9 +8,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -31,8 +29,8 @@ public class Controller implements Initializable{
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     private static Logger log = Logger.getLogger(Server.class.getCanonicalName());
     private Socket socket;
-    private ObjectOutputStream outputStream;
-    private ObjectInputStream inputStream;
+    private DataOutputStream outputStream;
+    private DataInputStream inputStream;
     private GraphicsContext gc;
 
     int ilosc, matrix_size;
@@ -50,8 +48,8 @@ public class Controller implements Initializable{
                     "127.0.0.1"
                     //"192.168.0.98"
                     , PORT);
-            outputStream = new ObjectOutputStream(socket.getOutputStream());
-            inputStream = new ObjectInputStream(socket.getInputStream());
+            outputStream = new DataOutputStream(socket.getOutputStream());
+            inputStream = new DataInputStream(socket.getInputStream());
 
         }catch (IOException e){
             log.info("Can't setup client on this port number.");
@@ -63,7 +61,9 @@ public class Controller implements Initializable{
     @FXML
     public void handle(KeyEvent event) {
         try {
-            outputStream.writeObject(new Command(Command.Type.CHANGE_DIRECTION, event.getCode()));
+            byte[] message = Serializer.serialize(new Command(Command.Type.CHANGE_DIRECTION, event.getCode()));
+            outputStream.writeInt(message.length);
+            outputStream.write(message);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -72,7 +72,9 @@ public class Controller implements Initializable{
     @FXML
     public void start(){
         try {
-            outputStream.writeObject(new Command(Command.Type.START));
+            byte[] message = Serializer.serialize(new Command(Command.Type.START));
+            outputStream.writeInt(message.length);
+            outputStream.write(message);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -104,9 +106,16 @@ public class Controller implements Initializable{
 
     public void getDimensionsFromServer(){
         try{
-            outputStream.writeObject(new Command(Command.Type.GET_DIMENSIONS));
+            byte[] message = Serializer.serialize(new Command(Command.Type.GET_DIMENSIONS));
+            outputStream.writeInt(message.length);
+            outputStream.write(message);
 
-            Command command = (Command) inputStream.readObject();
+            int lenght = inputStream.readInt();
+            if(lenght>0){
+                message = new byte[lenght];
+                inputStream.readFully(message, 0, message.length);
+            }
+            Command command = (Command) Serializer.deserialize(message);
             ilosc = command.ilosc;
             matrix_size = command.N;
             rozmiar_bloku = command.rozmiar_bloku;
@@ -122,8 +131,16 @@ public class Controller implements Initializable{
 
     public String getStringFromServer(){
         try{
-            outputStream.writeObject(new Command(Command.Type.SEND_MAP_STRING));
-            Command command = (Command) inputStream.readObject();
+            byte[] message = Serializer.serialize(new Command(Command.Type.SEND_MAP_STRING));
+            outputStream.writeInt(message.length);
+            outputStream.write(message);
+
+            int length = inputStream.readInt();
+            if(length>0){
+                message = new byte[length];
+                inputStream.readFully(message, 0, message.length);
+            }
+            Command command = (Command) Serializer.deserialize(message);
             return (String) command.getString();
 
         }catch (IOException e){

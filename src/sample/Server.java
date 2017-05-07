@@ -1,9 +1,6 @@
 package sample;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -48,8 +45,8 @@ public class Server{
 
     private static void waitForClient() {
         try {
-            ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
-            ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+            DataInputStream inputStream = new DataInputStream(socket.getInputStream());
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             log.info("Client connected.");
             switch (numberOfSnakes){
                 case 0:
@@ -74,16 +71,24 @@ public class Server{
         }
     }
 
-    private static void receiveCommands(ObjectInputStream inputStream, ObjectOutputStream outputStream, Snake snake){
+    private static void receiveCommands(DataInputStream inputStream, DataOutputStream outputStream, Snake snake){
 
         try {
             while (true) {
                 //oczekiwanie na kolejną komendę
-                Command command = (Command) inputStream.readObject();
+                byte[] message = new byte[1];
+                int length = inputStream.readInt();
+                if(length>0){
+                    message = new byte[length];
+                    inputStream.readFully(message, 0, message.length);
+                }
+                Command command = (Command) Serializer.deserialize(message);
 
                 switch (command.getType()){
                     case GET_DIMENSIONS:
-                        outputStream.writeObject(new Command(ilosc, N, rozmiar_bloku));
+                        message = Serializer.serialize(new Command(ilosc, N, rozmiar_bloku));
+                        outputStream.writeInt(message.length);
+                        outputStream.write(message);
                         break;
                     case MAP_TAB:
                         map.setMap(command.getTab());
@@ -102,7 +107,9 @@ public class Server{
                                 string += map.chceckBlock(new sample.Point(j, i));
                         }
                         log.info("Sending map");
-                        outputStream.writeObject(new Command(string));
+                        message = Serializer.serialize(new Command(string));
+                        outputStream.writeInt(message.length);
+                        outputStream.write(message);
                 }
                 if(snake.enabled) {
                     //log.info("Making move");
