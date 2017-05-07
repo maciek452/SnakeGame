@@ -167,23 +167,23 @@ public class Controller implements Initializable{
         this.gc = gc;
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
-        Image earth = new Image( "File:src/Graphics/Grass.png" );
-        Image wall = new Image( "File:src/Graphics/wall.png" );
-        Image tail = new Image( "File:src/Graphics/snake.png" );
-        Image head = new Image( "File:src/Graphics/snakeHead.png" );
-        Image kox = new Image( "File:src/Graphics/kox.png" );
+        Image earth_pic = new Image( "File:src/Graphics/Grass.png" );
+        Image wall_pic = new Image( "File:src/Graphics/wall.png" );
+        Image tail_pic = new Image( "File:src/Graphics/snake.png" );
+        Image head_pic = new Image( "File:src/Graphics/snakeHead.png" );
+        Image apple_pic = new Image( "File:src/Graphics/Apple.png" );
         gc.setFill(Color.GREEN);
         gc.setStroke(Color.DARKGREEN);
         double x = 0;
         double y = 0;
-        gc.drawImage(earth, 0, 0, this.canvas.getWidth(), this.canvas.getHeight());
+        gc.drawImage(earth_pic, 0, 0, this.canvas.getWidth(), this.canvas.getHeight());
         for(int i = 0; i < matrix_size; i++)
         {
             for(int j = 0; j < ilosc; j++)
             {
                 if(string.charAt(i*ilosc+j)=='#')
                 {
-                    gc.drawImage(wall, x, y, rozmiar_bloku, rozmiar_bloku);
+                    gc.drawImage(wall_pic, x, y, rozmiar_bloku, rozmiar_bloku);
                 }
                 if(string.charAt(i*ilosc+j)==' ')
                 {
@@ -191,11 +191,11 @@ public class Controller implements Initializable{
                 }
                 if(string.charAt(i*ilosc+j)=='O')
                 {
-                    gc.drawImage(head, x, y, rozmiar_bloku, rozmiar_bloku);
+                    gc.drawImage(head_pic, x, y, rozmiar_bloku, rozmiar_bloku);
                 }
                 if(string.charAt(i*ilosc+j)=='.')
                 {
-                    gc.drawImage(kox, x, y, rozmiar_bloku, rozmiar_bloku);
+                    gc.drawImage(apple_pic, x, y, rozmiar_bloku, rozmiar_bloku);
                 }
                 x += rozmiar_bloku;
             }
