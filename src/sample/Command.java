@@ -1,6 +1,5 @@
 package sample;
 
-import com.sun.javafx.scene.traversal.Direction;
 import javafx.scene.input.KeyCode;
 
 import java.io.Serializable;
@@ -15,8 +14,6 @@ public class Command implements Serializable {
     public enum Type{
         //komenda rysowania
         SEND_MAP,
-        //komenda rozłączenia
-        POINT,
         //przesłanie mapy
         MAP_TAB,
         //rozpoczęcie gry

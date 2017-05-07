@@ -1,7 +1,5 @@
 package sample;
 
-import javafx.application.Platform;
-
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -12,8 +10,6 @@ import java.net.SocketException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
-
-import static java.lang.String.format;
 
 /**
  * Created by Maciek on 27.03.2017.
@@ -84,40 +80,32 @@ public class Server{
             while (true) {
                 //oczekiwanie na kolejną komendę
                 Command command = (Command) inputStream.readObject();
-                if(command.getType()== Command.Type.SEND_MAP){
-                    outputStream.writeObject(new Command(Command.Type.MAP_TAB, map.getmap()));
-                }
 
-                if(command.getType()== Command.Type.GET_DIMENSIONS){
-                    outputStream.writeObject(new Command(ilosc, N, rozmiar_bloku));
+                switch (command.getType()){
+                    case GET_DIMENSIONS:
+                        outputStream.writeObject(new Command(ilosc, N, rozmiar_bloku));
+                        break;
+                    case MAP_TAB:
+                        map.setMap(command.getTab());
+                        break;
+                    case CHANGE_DIRECTION:
+                        snake.changeDirection(command.getKeyCode());
+                        break;
+                    case START:
+                        log.info("Snake enabled.");
+                        snake.enable();
+                        break;
+                    case SEND_MAP_STRING:
+                        String string = new String();
+                        for (int i = 0; i < N; i++) {
+                            for (int j = 0; j < ilosc; j++)
+                                string += map.chceckBlock(new sample.Point(j, i));
+                        }
+                        log.info("Sending map");
+                        outputStream.writeObject(new Command(string));
                 }
-                if(command.getType() == Command.Type.POINT){
-                    Point point = (Point) command.getPayload();
-                    log.info(format("Receiving point: %s, %s", point.x, point.y));
-                }
-                if(command.getType() == Command.Type.MAP_TAB){
-                    map.setMap(command.getTab());
-                }
-                if(command.getType()== Command.Type.CHANGE_DIRECTION){
-                    snake.changeDirection(command.getKeyCode());
-                }
-                if(command.getType() == Command.Type.START){
-                    log.info("Snake enabled.");
-                    snake.enable();
-                }
-                if(command.getType()== Command.Type.SEND_MAP_STRING){
-                    String string = new String();
-                    for (int i = 0; i < N; i++) {
-                        for (int j = 0; j < ilosc; j++)
-                            string += map.chceckBlock(new sample.Point(j, i));
-                        //string+="\n";
-                    }
-                    log.info("Sending map");
-                    outputStream.writeObject(new Command(string));
-                }
-
                 if(snake.enabled) {
-                    log.info("Making move");
+                    //log.info("Making move");
                     snake.makeMove(map);
                 }
             }

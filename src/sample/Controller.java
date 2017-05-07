@@ -48,8 +48,10 @@ public class Controller implements Initializable{
     public void initialize(URL location, ResourceBundle resources){
 
         try {
-            socket = new Socket(/*"127.0.0.1"/*/
-                     "192.168.0.98", PORT);
+            socket = new Socket(
+                    "127.0.0.1"
+                    //"192.168.0.98"
+                    , PORT);
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             inputStream = new ObjectInputStream(socket.getInputStream());
 
@@ -128,21 +130,6 @@ public class Controller implements Initializable{
         }
     }
 
-
-    public char[][] sendCeckMapSignal(){
-        try{
-            outputStream.writeObject(new Command(Command.Type.SEND_MAP));
-
-            Command command = (Command) inputStream.readObject();
-            return (char[][]) command.getTab();
-        }catch (IOException e){
-            log.info("Can't send point.");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            log.info("Can't find class inputStream.");
-        }
-        return null;
-    }
     public String getStringFromServer(){
         try{
             outputStream.writeObject(new Command(Command.Type.SEND_MAP_STRING));
