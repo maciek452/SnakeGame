@@ -29,7 +29,7 @@ public class Map {
                 else map[i][j]=' ';
             }
         }
-        makeDot();
+        //makeDot();
     }
 
     public char chceckBlock(sample.Point point){

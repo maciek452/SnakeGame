@@ -8,12 +8,12 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
@@ -64,7 +64,7 @@ public class Controller implements Initializable{
             Command command = (Command) Serializer.deserialize(message);
             ilosc = command.ilosc;
             matrix_size = command.N;
-            rozmiar_bloku = command.rozmiar_bloku;
+            rozmiar_bloku = command.blockSize;
 
             log.info(format("ilosc = %d, matrix= %d, rozmiar_b = %f", ilosc, matrix_size, rozmiar_bloku));
 
@@ -74,7 +74,6 @@ public class Controller implements Initializable{
             e.printStackTrace();
             log.info("Can't find class inputStream.");
         }
-
 
     }
     @FXML
@@ -88,69 +87,37 @@ public class Controller implements Initializable{
         }
     }
 
-    @FXML
-    public void start(){
+    public void makeCommand(Command.Type type){
         try {
-            byte[] message = Serializer.serialize(new Command(Command.Type.START));
+            byte[] message = Serializer.serialize(new Command(type));
             outputStream.writeInt(message.length);
             outputStream.write(message);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        executor.submit(() -> getStringFromServer());
-//        TimerTask timerTaskDrowingMap = new TimerTask() {
-//
-//            @Override
-//            public void run() {
-//                drawShapes(gc);
-//            }
-//        };
-//
-//        Timer timer = new Timer();//create a new Timer
-//
-//        timer.scheduleAtFixedRate(timerTaskDrowingMap, 30, 30);
-
-        //executor.submit(this::gettingMapAndDrowing);
     }
 
-//    public void getDimensionsFromServer(){
-//        try{
-//            byte[] message = Serializer.serialize(new Command(Command.Type.GET_DIMENSIONS));
-//            outputStream.writeInt(message.length);
-//            outputStream.write(message);
-//
-//            int lenght = inputStream.readInt();
-//            if(lenght>0){
-//                message = new byte[lenght];
-//                inputStream.readFully(message, 0, message.length);
-//            }
-//            Command command = (Command) Serializer.deserialize(message);
-//            ilosc = command.ilosc;
-//            matrix_size = command.N;
-//            rozmiar_bloku = command.rozmiar_bloku;
-//
-//            log.info(format("ilosc = %d, matrix= %d, rozmiar_b = %f", ilosc, matrix_size, rozmiar_bloku));
-//        }catch (IOException e){
-//            log.info("Can't send point.");
-//        } catch (ClassNotFoundException e) {
-//            e.printStackTrace();
-//            log.info("Can't find class inputStream.");
-//        }
-//    }
+    public void sendShutdownSignal(){
+        makeCommand(Command.Type.SHUTDOWN);
+    }
+
+    @FXML
+    public void start(){
+        makeCommand(Command.Type.START);
+        executor.submit(() -> getStringFromServer());
+    }
+
 
     public synchronized String getStringFromServer(){
-        byte[] message;
         try{
             while(true) {
                 int length = inputStream.readInt();
-                message = new byte[length];
+                byte[] message = new byte[length];
                 inputStream.readFully(message, 0, message.length);
                 Command command = (Command) Serializer.deserialize(message);
                 string = command.getString();
                 drawShapes(gc);
             }
-
         }catch (IOException e){
             log.info("Can't send point.");
         } catch (ClassNotFoundException e) {

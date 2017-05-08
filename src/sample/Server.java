@@ -49,9 +49,7 @@ public class Server{
         return new TimerTask() {
             @Override
             public void run() {
-                snake.movingEnabled = false;
                 snake.makeMove(map);
-                snake.movingEnabled = true;
             }
         };
     }
@@ -105,22 +103,25 @@ public class Server{
         }
     }
 
-    private static synchronized TimerTask sendMap(DataOutputStream outputStream) {
+    private static synchronized TimerTask sendMap(DataOutputStream outputStream, Snake snake) {
         return new TimerTask() {
             @Override
             public void run() {
+                if(snake.enabled)
                 try {
                     String string = new String();
                     for (int i = 0; i < N; i++) {
                         for (int j = 0; j < ilosc; j++)
                             string += map.chceckBlock(new sample.Point(j, i));
                     }
-                    //log.info("Sending map");
                     byte[] message = Serializer.serialize(new Command(string));
                     outputStream.writeInt(message.length);
                     outputStream.write(message);
                 } catch (IOException e) {
                     log.info(e.getMessage());
+                    snake.disable();
+                    snake.deleteSnake(map);
+                    numberOfSnakes--;
                     this.cancel();
                 }
             }
@@ -146,10 +147,16 @@ public class Server{
                         snake.changeDirection(command.getKeyCode());
                         break;
                     case START:
-                        log.info("Snake enabled.");
+                        log.info("Player starts game");
                         snake.enable();
                         Timer timer = new Timer();
-                        timer.scheduleAtFixedRate(sendMap(outputStream), 30, 30);
+                        timer.scheduleAtFixedRate(sendMap(outputStream, snake), 30, 30);
+                        break;
+                    case SHUTDOWN:
+                        log.info("Player disconected.");
+//                        snake.disable();
+//                        snake.deleteSnake(map);
+//                        numberOfSnakes--;
                         break;
                     case SEND_MAP_STRING:
                         String string = new String();

@@ -27,6 +27,7 @@ public class Main extends Application{
         primaryStage.setResizable(false);
         primaryStage.show();
         primaryStage.setOnCloseRequest(e -> {
+            controller.sendShutdownSignal();
             Platform.exit();
             System.exit(0);
         });

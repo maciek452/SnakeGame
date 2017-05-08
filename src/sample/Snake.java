@@ -92,7 +92,6 @@ public class Snake {
                 break;
         }
 
-        //collision(tmp);
         if (!collision(tmp, map))
         {
             pieces.add(0, new Point(tmp));
@@ -126,6 +125,12 @@ public class Snake {
                 map.setSnakePiece(piece, 'O');
             ++i;
         }
+    }
+
+    public void deleteSnake(Map map){
+        pieces.forEach(i->map.setSnakePiece(i, ' '));
+        pieces.removeAllElements();
+        snakeUpdate(map);
     }
 
     public void enable(){
