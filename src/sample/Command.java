@@ -12,13 +12,11 @@ public class Command implements Serializable {
      * Dostępne komendy
      */
     public enum Type{
-        //komenda rysowania
+
         SEND_MAP,
-        //przesłanie mapy
-        MAP_TAB,
-        //rozpoczęcie gry
+
         START,
-        //zmiana kierunku
+
         CHANGE_DIRECTION,
 
         SEND_MAP_STRING,
@@ -63,27 +61,23 @@ public class Command implements Serializable {
         this.type = type;
     }
 
-    public Type getType() {
+    public synchronized Type getType() {
         return type;
     }
 
-    public Payload getPayload() {
-        return payload;
-    }
-
-    public char[][] getTab(){
+    public synchronized char[][] getTab(){
         return tab;
     }
 
-    public String getString(){
+    public synchronized String getString(){
         return string;
     }
 
-    public Point getPoint(){
+    public synchronized Point getPoint(){
         return point;
     }
 
-    public KeyCode getKeyCode(){
+    public synchronized KeyCode getKeyCode(){
         return keyCode;
     }
 }

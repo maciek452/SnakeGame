@@ -23,10 +23,11 @@ public class Server{
     static int ilosc = (int) (canvasX/rozmiar_bloku);
 
     private static Logger log = Logger.getLogger(Server.class.getCanonicalName());
-    static ExecutorService executor = Executors.newFixedThreadPool(6);
+    static ExecutorService executor = Executors.newFixedThreadPool(8);
     private static final int PORT = 1337;
 
     private static Map map;
+    private static String oldString;
 
     private static Socket socket;
 
@@ -42,6 +43,12 @@ public class Server{
                 socket = serverSocket.accept();
                 //Oczekiwania na połączenie od klienta po stronie serwerowej
                 executor.submit(() -> waitForClient());
+
+                for (int i = 0; i < N; i++) {
+                    for (int j = 0; j < ilosc; j++)
+                        oldString += map.chceckBlock(new sample.Point(j, i));
+                }
+
             } catch (IOException e) {
                 log.info("Can't setup server on this port number.");
             }
@@ -52,7 +59,8 @@ public class Server{
         return new TimerTask() {
             @Override
             public void run() {
-                snake.makeMove(map);
+                if(snake.enabled)
+                    snake.makeMove(map);
             }
         };
     }
@@ -93,11 +101,42 @@ public class Server{
             e.printStackTrace();
         }
     }
+    private static void sendingMap(DataOutputStream outputStream){
 
+        while (true) {
+            log.info("starting map sending");
+            String string = new String();
+            for (int i = 0; i < N; i++) {
+                for (int j = 0; j < ilosc; j++)
+                    string += map.chceckBlock(new sample.Point(j, i));
+            }
+            boolean changed = false;
+            for (int i = 0; i < string.length(); i++) {
+                if (string.charAt(i) != oldString.charAt(i))
+                    changed = true;
+            }
+            if (changed || !changed) {
+                try {
+                    byte[] message = Serializer.serialize(new Command(string));
+                    outputStream.writeInt(message.length);
+                    outputStream.write(message);
+                    log.info("map sent");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
     private static void receiveCommands(DataInputStream inputStream, DataOutputStream outputStream, Snake snake){
 
         try {
-            log.info("Reciving from client"+numberOfSnakes);
+            log.info("Reciving from client" + numberOfSnakes);
 
             while (true) {
                 //oczekiwanie na kolejną komendę
@@ -106,38 +145,33 @@ public class Server{
                 byte[] message = new byte[length];
                 inputStream.readFully(message, 0, message.length);
 
-                Command command = (Command) Serializer.deserialize(message);
+                if(message.length > 0) {
+                    Command command = (Command) Serializer.deserialize(message);
 
-                switch (command.getType()){
-                    case GET_DIMENSIONS:
-                        message = Serializer.serialize(new Command(ilosc, N, rozmiar_bloku));
-                        outputStream.writeInt(message.length);
-                        outputStream.write(message);
-                        break;
-                    case MAP_TAB:
-                        map.setMap(command.getTab());
-                        break;
-                    case CHANGE_DIRECTION:
-                        snake.changeDirection(command.getKeyCode());
-                        break;
-                    case START:
-                        log.info("Snake enabled.");
-                        snake.enable();
-                        break;
-                    case SEND_MAP_STRING:
-                        String string = new String();
-                        for (int i = 0; i < N; i++) {
-                            for (int j = 0; j < ilosc; j++)
-                                string += map.chceckBlock(new sample.Point(j, i));
-                        }
-                        //log.info("Sending map");
-                        message = Serializer.serialize(new Command(string));
-                        outputStream.writeInt(message.length);
-                        outputStream.write(message);
+                    switch (command.getType()) {
+                        case GET_DIMENSIONS:
+                            synchronized (message) {
+                                message = Serializer.serialize(new Command(ilosc, N, rozmiar_bloku));
+                                outputStream.writeInt(message.length);
+                                outputStream.write(message);
+                            }
+                            break;
+                        case CHANGE_DIRECTION:
+                            snake.changeDirection(command.getKeyCode());
+                            break;
+                        case START:
+                            log.info("Snake enabled.");
+                            snake.enable();
+                            executor.submit(()->sendingMap(outputStream));
+                            break;
+                    }
                 }
             }
-        } catch (EOFException | SocketException e) {
-            log.info("Nastąpiło rozłączenie");
+        } catch (EOFException e) {
+            log.info("Tu sie wyjebuje");
+            //disconnect();
+        } catch (SocketException e){
+            log.info("Nastąpiło rozłączenie222");
             //disconnect();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

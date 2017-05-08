@@ -56,8 +56,27 @@ public class Controller implements Initializable{
             log.info("Can't setup client on this port number.");
         }
 
+        log.info("Przed wysłaniem żądania");
         getDimensionsFromServer();
-        string = getStringFromServer();
+        log.info("Po odebraniu");
+        string = "";
+
+        char [][] map  =new char[matrix_size][ilosc];
+        for(int i = 0; i < matrix_size; i++ ) {
+            for (int j = 0; j < ilosc; j++) {
+                if (i == 0 || j == 0 || i == matrix_size - 1 || j == ilosc - 1)
+                    map[i][j] = '#';
+                else map[i][j]=' ';
+            }
+        }
+
+        for(int i = 0; i < matrix_size; i++ ) {
+            for (int j = 0; j < ilosc; j++) {
+                string+=map[i][j];
+            }
+        }
+
+
     }
     @FXML
     public void handle(KeyEvent event) {
@@ -80,31 +99,24 @@ public class Controller implements Initializable{
             e.printStackTrace();
         }
 
-        TimerTask timerTaskGettingMap = new TimerTask() {
-
-            @Override
-            public void run() {
-                string = getStringFromServer();
-            }
-        };
+        executor.submit(()->getStringFromServer());
 
         TimerTask timerTaskDrowingMap = new TimerTask() {
 
             @Override
             public void run() {
-                drawShapes(gc);
+                    drawShapes(gc);
             }
         };
 
         Timer timer = new Timer();//create a new Timer
 
-        timer.scheduleAtFixedRate(timerTaskGettingMap, 30, 100);
         timer.scheduleAtFixedRate(timerTaskDrowingMap, 30, 100);
 
         //executor.submit(this::gettingMapAndDrowing);
     }
 
-    public void getDimensionsFromServer(){
+    public synchronized void getDimensionsFromServer(){
         try{
             byte[] message = Serializer.serialize(new Command(Command.Type.GET_DIMENSIONS));
             outputStream.writeInt(message.length);
@@ -129,27 +141,25 @@ public class Controller implements Initializable{
         }
     }
 
-    public synchronized String getStringFromServer(){
-        try{
-            byte[] message = Serializer.serialize(new Command(Command.Type.SEND_MAP_STRING));
-            outputStream.writeInt(message.length);
-            outputStream.write(message);
-
-            int length = inputStream.readInt();
-            if(length>0){
-                message = new byte[length];
-                inputStream.readFully(message, 0, message.length);
+    public synchronized void getStringFromServer(){
+        while (true) {
+            try {
+                byte[] message;
+                int length = inputStream.readInt();
+                if (length > 0) {
+                    message = new byte[length];
+                    inputStream.readFully(message, 0, message.length);
+                    Command command = (Command) Serializer.deserialize(message);
+                    string = command.getString();
+                    log.info("string sie pobrał");
+                }
+            } catch (IOException e) {
+                log.info("Can't send point.");
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+                log.info("Can't find class inputStream.");
             }
-            Command command = (Command) Serializer.deserialize(message);
-            return (String) command.getString();
-
-        }catch (IOException e){
-            log.info("Can't send point.");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            log.info("Can't find class inputStream.");
         }
-        return null;
     }
 
     public void LoadGraphics() {
@@ -163,7 +173,7 @@ public class Controller implements Initializable{
         apple_pic = new Image( "File:src/Graphics/Apple.png" );
     }
 
-    public synchronized void drawShapes(GraphicsContext gc) {
+    public void drawShapes(GraphicsContext gc) {
         this.gc = gc;
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
