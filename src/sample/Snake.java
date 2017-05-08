@@ -15,11 +15,11 @@ public class Snake {
     int lenght;
     Direction direction;
     boolean enabled = false;
+    boolean movingEnabled = true;
 
     public Snake(Point point){
         this.point = point;
         this.lenght = 3;
-
         Point tmp = new Point(point);
         pieces.add(new Point(tmp));
         tmp.x-=1;
@@ -47,26 +47,28 @@ public class Snake {
         else return true;
     }
 
-    public synchronized void changeDirection(KeyCode key){
-        switch (key){
-            case A:
-                if(direction!=Direction.RIGHT)
-                    direction = Direction.LEFT;
-                break;
-            case S:
-                if(direction!=Direction.UP)
-                    direction = Direction.DOWN;
-                break;
-            case D:
-                if(direction!=Direction.LEFT)
-                    direction = Direction.RIGHT;
-                break;
-            case W:
-                if(direction!=Direction.DOWN)
-                    direction = Direction.UP;
-                break;
-            default:
-                break;
+    public void changeDirection(KeyCode key){
+        if(movingEnabled) {
+            switch (key) {
+                case A:
+                    if (direction != Direction.RIGHT)
+                        direction = Direction.LEFT;
+                    break;
+                case S:
+                    if (direction != Direction.UP)
+                        direction = Direction.DOWN;
+                    break;
+                case D:
+                    if (direction != Direction.LEFT)
+                        direction = Direction.RIGHT;
+                    break;
+                case W:
+                    if (direction != Direction.DOWN)
+                        direction = Direction.UP;
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -89,6 +91,7 @@ public class Snake {
             default:
                 break;
         }
+
         //collision(tmp);
         if (!collision(tmp, map))
         {
@@ -100,7 +103,7 @@ public class Snake {
         snakeUpdate(map);
     }
 
-    public synchronized void snakeUpdate(Map map){
+    public void snakeUpdate(Map map){
         int i = 0;
         for (Point piece: pieces){
             if(i == 0) {

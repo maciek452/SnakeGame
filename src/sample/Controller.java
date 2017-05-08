@@ -24,14 +24,13 @@ public class Controller implements Initializable{
 
     @FXML
     public Canvas canvas;
-    @FXML
     private String string;
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     private static Logger log = Logger.getLogger(Server.class.getCanonicalName());
     private Socket socket;
     private DataOutputStream outputStream;
     private DataInputStream inputStream;
-    private GraphicsContext gc;
+    public GraphicsContext gc;
 
     int ilosc, matrix_size;
     double rozmiar_bloku;
@@ -46,7 +45,7 @@ public class Controller implements Initializable{
         try {
             socket = new Socket(
                     "127.0.0.1"
-                    //"192.168.0.98"
+                    //"192.168.0.68"
                     //"192.168.0.97"
                     , PORT);
             outputStream = new DataOutputStream(socket.getOutputStream());
@@ -56,11 +55,30 @@ public class Controller implements Initializable{
             log.info("Can't setup client on this port number.");
         }
 
-        getDimensionsFromServer();
-        string = getStringFromServer();
+        try{
+            //pobieramy rozmiary
+            int lenght = inputStream.readInt();
+            byte [] message = new byte[lenght];
+            inputStream.readFully(message, 0, message.length);
+
+            Command command = (Command) Serializer.deserialize(message);
+            ilosc = command.ilosc;
+            matrix_size = command.N;
+            rozmiar_bloku = command.rozmiar_bloku;
+
+            log.info(format("ilosc = %d, matrix= %d, rozmiar_b = %f", ilosc, matrix_size, rozmiar_bloku));
+
+        }catch (IOException e){
+            log.info("Can't send point.");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            log.info("Can't find class inputStream.");
+        }
+
+
     }
     @FXML
-    public void handle(KeyEvent event) {
+    public void handle(KeyEvent event) throws IOException{
         try {
             byte[] message = Serializer.serialize(new Command(Command.Type.CHANGE_DIRECTION, event.getCode()));
             outputStream.writeInt(message.length);
@@ -80,68 +98,58 @@ public class Controller implements Initializable{
             e.printStackTrace();
         }
 
-        TimerTask timerTaskGettingMap = new TimerTask() {
-
-            @Override
-            public void run() {
-                string = getStringFromServer();
-            }
-        };
-
-        TimerTask timerTaskDrowingMap = new TimerTask() {
-
-            @Override
-            public void run() {
-                drawShapes(gc);
-            }
-        };
-
-        Timer timer = new Timer();//create a new Timer
-
-        timer.scheduleAtFixedRate(timerTaskGettingMap, 30, 100);
-        timer.scheduleAtFixedRate(timerTaskDrowingMap, 30, 100);
+        executor.submit(() -> getStringFromServer());
+//        TimerTask timerTaskDrowingMap = new TimerTask() {
+//
+//            @Override
+//            public void run() {
+//                drawShapes(gc);
+//            }
+//        };
+//
+//        Timer timer = new Timer();//create a new Timer
+//
+//        timer.scheduleAtFixedRate(timerTaskDrowingMap, 30, 30);
 
         //executor.submit(this::gettingMapAndDrowing);
     }
 
-    public void getDimensionsFromServer(){
-        try{
-            byte[] message = Serializer.serialize(new Command(Command.Type.GET_DIMENSIONS));
-            outputStream.writeInt(message.length);
-            outputStream.write(message);
-
-            int lenght = inputStream.readInt();
-            if(lenght>0){
-                message = new byte[lenght];
-                inputStream.readFully(message, 0, message.length);
-            }
-            Command command = (Command) Serializer.deserialize(message);
-            ilosc = command.ilosc;
-            matrix_size = command.N;
-            rozmiar_bloku = command.rozmiar_bloku;
-
-            log.info(format("ilosc = %d, matrix= %d, rozmiar_b = %f", ilosc, matrix_size, rozmiar_bloku));
-        }catch (IOException e){
-            log.info("Can't send point.");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            log.info("Can't find class inputStream.");
-        }
-    }
+//    public void getDimensionsFromServer(){
+//        try{
+//            byte[] message = Serializer.serialize(new Command(Command.Type.GET_DIMENSIONS));
+//            outputStream.writeInt(message.length);
+//            outputStream.write(message);
+//
+//            int lenght = inputStream.readInt();
+//            if(lenght>0){
+//                message = new byte[lenght];
+//                inputStream.readFully(message, 0, message.length);
+//            }
+//            Command command = (Command) Serializer.deserialize(message);
+//            ilosc = command.ilosc;
+//            matrix_size = command.N;
+//            rozmiar_bloku = command.rozmiar_bloku;
+//
+//            log.info(format("ilosc = %d, matrix= %d, rozmiar_b = %f", ilosc, matrix_size, rozmiar_bloku));
+//        }catch (IOException e){
+//            log.info("Can't send point.");
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//            log.info("Can't find class inputStream.");
+//        }
+//    }
 
     public synchronized String getStringFromServer(){
+        byte[] message;
         try{
-            byte[] message = Serializer.serialize(new Command(Command.Type.SEND_MAP_STRING));
-            outputStream.writeInt(message.length);
-            outputStream.write(message);
-
-            int length = inputStream.readInt();
-            if(length>0){
+            while(true) {
+                int length = inputStream.readInt();
                 message = new byte[length];
                 inputStream.readFully(message, 0, message.length);
+                Command command = (Command) Serializer.deserialize(message);
+                string = command.getString();
+                drawShapes(gc);
             }
-            Command command = (Command) Serializer.deserialize(message);
-            return (String) command.getString();
 
         }catch (IOException e){
             log.info("Can't send point.");
@@ -163,8 +171,7 @@ public class Controller implements Initializable{
         apple_pic = new Image( "File:src/Graphics/Apple.png" );
     }
 
-    public synchronized void drawShapes(GraphicsContext gc) {
-        this.gc = gc;
+    public  void drawShapes(GraphicsContext gc) {
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
         gc.setFill(Color.GREEN);

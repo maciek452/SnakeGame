@@ -32,11 +32,11 @@ public class Map {
         makeDot();
     }
 
-    public synchronized char chceckBlock(sample.Point point){
+    public char chceckBlock(sample.Point point){
         return map[point.y][point.x];
     }
 
-    public synchronized void makeDot(){
+    public void makeDot(){
         Point tmp = new Point();
         do{
             tmp.x = rand.nextInt(M-2)+1;
@@ -46,11 +46,11 @@ public class Map {
         map[tmp.y][tmp.x] = '.';
     }
 
-    public synchronized void erasePiece(Point point){
+    public void erasePiece(Point point){
         map[point.y][point.x] = ' ';
     }
 
-    public synchronized void setSnakePiece(Point point, char x){
+    public void setSnakePiece(Point point, char x){
         map[point.y][point.x] = x;
     }
 
@@ -58,7 +58,7 @@ public class Map {
         return map;
     }
 
-    public synchronized void setMap(char[][] tab){
+    public void setMap(char[][] tab){
         this.map = tab;
     }
 }
