@@ -1,11 +1,16 @@
 package sample;
 
-import java.io.*;
+import java.awt.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
@@ -15,15 +20,16 @@ import java.util.logging.Logger;
  */
 public class Server{
 
-    static int canvasX = 1200, canvasY = 600, N = 31;
-    static double rozmiar_bloku = canvasY / N;
-    static int ilosc = (int) (canvasX/rozmiar_bloku);
+    static int canvasX = 1200, canvasY = 600, height = 20;
+    static double blockSize = canvasY / height;
+    static int width = (int) (canvasX/ blockSize);
 
     private static Logger log = Logger.getLogger(Server.class.getCanonicalName());
     static ExecutorService executor = Executors.newFixedThreadPool(6);
     private static final int PORT = 1337;
 
     private static Map map;
+    private static char[][] oldMap;
 
     private static Socket socket;
 
@@ -31,8 +37,12 @@ public class Server{
     private static Snake snake1, snake2, snake3;
 
     public static void main(String[] args)throws IOException{
-        map = new Map(N, ilosc);
-
+        map = new Map(height, width);
+        oldMap = new char[height][width];
+        for (int i = 0; i< height; i++){
+            for (int j = 0; j< width; j++)
+            oldMap[i][j] = map.chceckBlock(new Point(j, i));
+        }
         log.info("Server starts.");
         while(true) {
             try (ServerSocket serverSocket = new ServerSocket(PORT)) {
@@ -49,9 +59,25 @@ public class Server{
         return new TimerTask() {
             @Override
             public void run() {
+                if(snake.enabled)
                 snake.makeMove(map);
             }
         };
+    }
+
+    private static synchronized void sendWholeMap(DataOutputStream outputStream) {
+        try {
+            String string = new String();
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++)
+                    string += map.chceckBlock(new Point(j, i));
+            }
+            byte[] message = Serializer.serialize(new Command(string));
+            outputStream.writeInt(message.length);
+            outputStream.write(message);
+        } catch (IOException e) {
+            log.info(e.getMessage());
+        }
     }
 
     private static void waitForClient() {
@@ -60,6 +86,7 @@ public class Server{
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             log.info("Client "+numberOfSnakes+" connected.");
             sendDimensions(outputStream);
+
             Timer timer = new Timer();
 
             switch (numberOfSnakes){
@@ -94,7 +121,7 @@ public class Server{
     }
     private static void sendDimensions(DataOutputStream outputStream){
         try {
-            byte [] message = Serializer.serialize(new Command(ilosc, N, rozmiar_bloku));
+            byte [] message = Serializer.serialize(new Command(width, height, blockSize));
             outputStream.writeInt(message.length);
             outputStream.write(message);
             return;
@@ -107,16 +134,26 @@ public class Server{
         return new TimerTask() {
             @Override
             public void run() {
-                if(snake.enabled)
                 try {
-                    String string = new String();
-                    for (int i = 0; i < N; i++) {
-                        for (int j = 0; j < ilosc; j++)
-                            string += map.chceckBlock(new sample.Point(j, i));
+                    Vector<Payload> changedPoints = new Vector<>();
+                    for (int i = 1; i < height -1; i++) {
+                        for (int j = 1; j < width -1; j++)
+                            if(map.chceckBlock(new Point(j, i)) != oldMap[i][j]) {
+                                changedPoints.add(new Payload(new Point(j, i), map.chceckBlock(new Point(j, i))));
+                            }
                     }
-                    byte[] message = Serializer.serialize(new Command(string));
-                    outputStream.writeInt(message.length);
-                    outputStream.write(message);
+                    if(changedPoints.size()>0) {
+                        log.info("Roznia sie");
+
+                        for (int i = 0; i< height; i++){
+                            for (int j = 0; j< width; j++)
+                                oldMap[i][j] = map.chceckBlock(new Point(j, i));
+                        }
+
+                        byte[] message = Serializer.serialize(new Command(changedPoints));
+                        outputStream.writeInt(message.length);
+                        outputStream.write(message);
+                    }
                 } catch (IOException e) {
                     log.info(e.getMessage());
                     snake.disable();
@@ -151,6 +188,7 @@ public class Server{
                         snake.enable();
                         Timer timer = new Timer();
                         timer.scheduleAtFixedRate(sendMap(outputStream, snake), 30, 30);
+                        sendWholeMap(outputStream);
                         break;
                     case SHUTDOWN:
                         log.info("Player disconected.");
@@ -160,9 +198,9 @@ public class Server{
                         break;
                     case SEND_MAP_STRING:
                         String string = new String();
-                        for (int i = 0; i < N; i++) {
-                            for (int j = 0; j < ilosc; j++)
-                                string += map.chceckBlock(new sample.Point(j, i));
+                        for (int i = 0; i < height; i++) {
+                            for (int j = 0; j < width; j++)
+                                string += map.chceckBlock(new Point(j, i));
                         }
                         //log.info("Sending map");
                         message = Serializer.serialize(new Command(string));

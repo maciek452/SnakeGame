@@ -19,7 +19,7 @@ public class Main extends Application{
         GraphicsContext gc = controller.canvas.getGraphicsContext2D();
         primaryStage.setTitle("Snake");
         controller.gc = gc;
-        //controller.drawShapes(gc);
+        //controller.drawAllShapes(gc);
         controller.LoadGraphics();
         primaryStage.setScene(new Scene(root));
         primaryStage.setWidth(1400);

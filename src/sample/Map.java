@@ -1,5 +1,6 @@
 package sample;
 
+import java.awt.*;
 import java.util.Random;
 
 /**
@@ -18,21 +19,21 @@ public class Map {
 
     }
 
-    public Map(int N, int M){
-        map  =new char[N][M];
-        this.N = N;
+    public Map(int height, int M){
+        map  =new char[height][M];
+        this.N = height;
         this.M = M;
-        for(int i = 0; i < N; i++ ) {
+        for(int i = 0; i < height; i++ ) {
             for (int j = 0; j < M; j++) {
-                if (i == 0 || j == 0 || i == N - 1 || j == M - 1)
+                if (i == 0 || j == 0 || i == height - 1 || j == M - 1)
                     map[i][j] = '#';
                 else map[i][j]=' ';
             }
         }
-        //makeDot();
+        makeDot();
     }
 
-    public char chceckBlock(sample.Point point){
+    public char chceckBlock(Point point){
         return map[point.y][point.x];
     }
 

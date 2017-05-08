@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
@@ -32,8 +33,8 @@ public class Controller implements Initializable{
     private DataInputStream inputStream;
     public GraphicsContext gc;
 
-    int ilosc, matrix_size;
-    double rozmiar_bloku;
+    int width, height;
+    double blockSize;
     Image earth_pic, wall_pic, tail_pic, headUp_pic,
             headDown_pic, headLeft_pic, headRight_pic, apple_pic;
 
@@ -62,11 +63,11 @@ public class Controller implements Initializable{
             inputStream.readFully(message, 0, message.length);
 
             Command command = (Command) Serializer.deserialize(message);
-            ilosc = command.ilosc;
-            matrix_size = command.N;
-            rozmiar_bloku = command.blockSize;
+            width = command.ilosc;
+            height = command.N;
+            blockSize = command.blockSize;
 
-            log.info(format("ilosc = %d, matrix= %d, rozmiar_b = %f", ilosc, matrix_size, rozmiar_bloku));
+            log.info(format("width = %d, matrix= %d, rozmiar_b = %f", width, height, blockSize));
 
         }catch (IOException e){
             log.info("Can't send point.");
@@ -74,6 +75,8 @@ public class Controller implements Initializable{
             e.printStackTrace();
             log.info("Can't find class inputStream.");
         }
+
+
 
     }
     @FXML
@@ -104,19 +107,39 @@ public class Controller implements Initializable{
     @FXML
     public void start(){
         makeCommand(Command.Type.START);
-        executor.submit(() -> getStringFromServer());
+
+            try {
+                //pobieramy mapę
+                int length = inputStream.readInt();
+                byte[] message = new byte[length];
+                inputStream.readFully(message, 0, message.length);
+
+                Command command = (Command) Serializer.deserialize(message);
+                string = command.getString();
+
+                log.info("String recived");
+            } catch (IOException e) {
+                log.info("Can't send point.");
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+                log.info("Can't find class inputStream.");
+            }
+
+        drawAllShapes(gc);
+
+        gc.drawImage(wall_pic, 2*blockSize, 2*blockSize, blockSize, blockSize);
+        executor.submit(() -> getChangesFromServer());
     }
 
-
-    public synchronized String getStringFromServer(){
+    public synchronized void getChangesFromServer(){
         try{
             while(true) {
+                //og.info("Odebrało kurwa");
                 int length = inputStream.readInt();
                 byte[] message = new byte[length];
                 inputStream.readFully(message, 0, message.length);
                 Command command = (Command) Serializer.deserialize(message);
-                string = command.getString();
-                drawShapes(gc);
+                drawShapes(gc, command.getVector());
             }
         }catch (IOException e){
             log.info("Can't send point.");
@@ -124,7 +147,6 @@ public class Controller implements Initializable{
             e.printStackTrace();
             log.info("Can't find class inputStream.");
         }
-        return null;
     }
 
     public void LoadGraphics() {
@@ -138,50 +160,106 @@ public class Controller implements Initializable{
         apple_pic = new Image( "File:src/Graphics/Apple.png" );
     }
 
-    public  void drawShapes(GraphicsContext gc) {
+    public void setImage(Payload payload){
+
+        log.info("jest");
+        switch(payload.getChar())
+        {
+            case '#':
+                gc.drawImage(wall_pic, payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
+                break;
+            case ' ':
+                gc.drawImage(earth_pic,payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
+                break;
+            case '>':
+                gc.drawImage(headRight_pic, payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
+                break;
+            case '<':
+                gc.drawImage(headLeft_pic, payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
+                break;
+            case '^':
+                gc.drawImage(headUp_pic, payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
+                break;
+            case 'V':
+                gc.drawImage(headDown_pic, payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
+                break;
+            case 'O':
+                gc.drawImage(tail_pic, payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
+                break;
+            case '.':
+                gc.drawImage(apple_pic, payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
+                break;
+        }
+    }
+
+    public  synchronized void drawShapes(GraphicsContext gc, Vector<Payload> vector) {
+
+        //log.info("fun 2");
+//        gc.setFill(Color.BLACK);
+//        gc.fillRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
+//        gc.setFill(Color.GREEN);
+//        gc.setStroke(Color.DARKGREEN);
+//        gc.drawImage(earth_pic, 0, 0, this.canvas.getWidth(), this.canvas.getHeight());
+        vector.forEach(i->setImage(i));
+//        String string = "";
+//        log.info("dupa: "+vector.size());
+//        for (Payload i:vector) {
+//            string+=i.getChar();
+//        }
+        //log.info(string);
+    }
+
+    public synchronized void drawAllShapes(GraphicsContext gc) {
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
         gc.setFill(Color.GREEN);
         gc.setStroke(Color.DARKGREEN);
         double x = 0;
         double y = 0;
-        gc.drawImage(earth_pic, 0, 0, this.canvas.getWidth(), this.canvas.getHeight());
+       // gc.drawImage(earth_pic, 0, 0, this.canvas.getWidth(), this.canvas.getHeight());
 
-        for(int i = 0; i < matrix_size; i++)
+        for(int i = 0; i < height; i++)
         {
-            for(int j = 0; j < ilosc; j++)
+            for(int j = 0; j < width; j++)
             {
-                switch(string.charAt(i*ilosc+j))
+                switch(string.charAt(i*width+j))
                 {
                     case '#':
-                        gc.drawImage(wall_pic, x, y, rozmiar_bloku, rozmiar_bloku);
+                        gc.drawImage(earth_pic, x, y, blockSize, blockSize);
+                        gc.drawImage(wall_pic, x, y, blockSize, blockSize);
                         break;
                     case ' ':
-                        gc.strokeRect(x, y, rozmiar_bloku, rozmiar_bloku);
+                        gc.drawImage(earth_pic, x, y, blockSize, blockSize);
                         break;
                     case '>':
-                        gc.drawImage(headRight_pic, x, y, rozmiar_bloku, rozmiar_bloku);
+                        gc.drawImage(earth_pic, x, y, blockSize, blockSize);
+                        gc.drawImage(headRight_pic, x, y, blockSize, blockSize);
                         break;
                     case '<':
-                        gc.drawImage(headLeft_pic, x, y, rozmiar_bloku, rozmiar_bloku);
+                        gc.drawImage(earth_pic, x, y, blockSize, blockSize);
+                        gc.drawImage(headLeft_pic, x, y, blockSize, blockSize);
                         break;
                     case '^':
-                        gc.drawImage(headUp_pic, x, y, rozmiar_bloku, rozmiar_bloku);
+                        gc.drawImage(earth_pic, x, y, blockSize, blockSize);
+                        gc.drawImage(headUp_pic, x, y, blockSize, blockSize);
                         break;
                     case 'V':
-                        gc.drawImage(headDown_pic, x, y, rozmiar_bloku, rozmiar_bloku);
+                        gc.drawImage(earth_pic, x, y, blockSize, blockSize);
+                        gc.drawImage(headDown_pic, x, y, blockSize, blockSize);
                         break;
                     case 'O':
-                        gc.drawImage(tail_pic, x, y, rozmiar_bloku, rozmiar_bloku);
+                        gc.drawImage(earth_pic, x, y, blockSize, blockSize);
+                        gc.drawImage(tail_pic, x, y, blockSize, blockSize);
                         break;
                     case '.':
-                        gc.drawImage(apple_pic, x, y, rozmiar_bloku, rozmiar_bloku);
+                        gc.drawImage(earth_pic, x, y, blockSize, blockSize);
+                        gc.drawImage(apple_pic, x, y, blockSize, blockSize);
                         break;
                 }
-                x += rozmiar_bloku;
+                x += blockSize;
             }
             x = 0;
-            y += rozmiar_bloku;
+            y += blockSize;
         }
     }
 }
