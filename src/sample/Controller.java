@@ -58,16 +58,15 @@ public class Controller implements Initializable{
 
         try{
             //pobieramy rozmiary
-            int lenght = inputStream.readInt();
-            byte [] message = new byte[lenght];
+            int length = inputStream.readInt();
+            byte [] message = new byte[length];
             inputStream.readFully(message, 0, message.length);
 
             Command command = (Command) Serializer.deserialize(message);
             width = command.ilosc;
             height = command.N;
             blockSize = command.blockSize;
-
-            log.info(format("width = %d, matrix= %d, rozmiar_b = %f", width, height, blockSize));
+            log.info(format("width = %d, matrix= %d, block size = %f", width, height, blockSize));
 
         }catch (IOException e){
             log.info("Can't send point.");
@@ -75,9 +74,6 @@ public class Controller implements Initializable{
             e.printStackTrace();
             log.info("Can't find class inputStream.");
         }
-
-
-
     }
     @FXML
     public void handle(KeyEvent event) throws IOException{
@@ -113,28 +109,21 @@ public class Controller implements Initializable{
                 int length = inputStream.readInt();
                 byte[] message = new byte[length];
                 inputStream.readFully(message, 0, message.length);
-
                 Command command = (Command) Serializer.deserialize(message);
                 string = command.getString();
-
-                log.info("String recived");
             } catch (IOException e) {
                 log.info("Can't send point.");
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
                 log.info("Can't find class inputStream.");
             }
-
         drawAllShapes(gc);
-
-        gc.drawImage(wall_pic, 2*blockSize, 2*blockSize, blockSize, blockSize);
         executor.submit(() -> getChangesFromServer());
     }
 
     public synchronized void getChangesFromServer(){
         try{
             while(true) {
-                //og.info("Odebrało kurwa");
                 int length = inputStream.readInt();
                 byte[] message = new byte[length];
                 inputStream.readFully(message, 0, message.length);
@@ -161,8 +150,6 @@ public class Controller implements Initializable{
     }
 
     public void setImage(Payload payload){
-
-        log.info("jest");
         switch(payload.getChar())
         {
             case '#':
@@ -193,20 +180,7 @@ public class Controller implements Initializable{
     }
 
     public  synchronized void drawShapes(GraphicsContext gc, Vector<Payload> vector) {
-
-        //log.info("fun 2");
-//        gc.setFill(Color.BLACK);
-//        gc.fillRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
-//        gc.setFill(Color.GREEN);
-//        gc.setStroke(Color.DARKGREEN);
-//        gc.drawImage(earth_pic, 0, 0, this.canvas.getWidth(), this.canvas.getHeight());
         vector.forEach(i->setImage(i));
-//        String string = "";
-//        log.info("dupa: "+vector.size());
-//        for (Payload i:vector) {
-//            string+=i.getChar();
-//        }
-        //log.info(string);
     }
 
     public synchronized void drawAllShapes(GraphicsContext gc) {
