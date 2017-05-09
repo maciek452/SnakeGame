@@ -10,7 +10,6 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
@@ -20,7 +19,7 @@ import java.util.logging.Logger;
  */
 public class Server{
 
-    static int canvasX = 1200, canvasY = 600, height = 20;
+    static int canvasX = 1200, canvasY = 600, height = 50;
     static double blockSize = canvasY / height;
     static int width = (int) (canvasX/ blockSize);
 
@@ -65,20 +64,7 @@ public class Server{
         };
     }
 
-    private static synchronized void sendWholeMap(DataOutputStream outputStream) {
-        try {
-            String string = new String();
-            for (int i = 0; i < height; i++) {
-                for (int j = 0; j < width; j++)
-                    string += map.chceckBlock(new Point(j, i));
-            }
-            byte[] message = Serializer.serialize(new Command(string));
-            outputStream.writeInt(message.length);
-            outputStream.write(message);
-        } catch (IOException e) {
-            log.info(e.getMessage());
-        }
-    }
+
 
     private static void waitForClient() {
         try {
@@ -130,29 +116,40 @@ public class Server{
         }
     }
 
+    private static synchronized TimerTask sendWholeMap(DataOutputStream outputStream) {
+        return new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    String string = new String();
+                    for (int i = 0; i < height; i++) {
+                        for (int j = 0; j < width; j++)
+                            string += map.chceckBlock(new Point(j, i));
+                        //string += "\n";
+                    }
+                    byte[] message = Serializer.serialize(new Command(string));
+                    //outputStream.writeInt(message.length);
+                    outputStream.write(message);
+                } catch (IOException e) {
+                    log.info(e.getMessage());
+                }
+            }
+        };
+    }
+
     private static synchronized TimerTask sendMap(DataOutputStream outputStream, Snake snake) {
         return new TimerTask() {
             @Override
             public void run() {
                 try {
-                    Vector<Payload> changedPoints = new Vector<>();
                     for (int i = 1; i < height -1; i++) {
                         for (int j = 1; j < width -1; j++)
                             if(map.chceckBlock(new Point(j, i)) != oldMap[i][j]) {
-                                changedPoints.add(new Payload(new Point(j, i), map.chceckBlock(new Point(j, i))));
-                            }
-                    }
-                    if(changedPoints.size()>0) {
-                        log.info("Roznia sie");
-
-                        for (int i = 0; i< height; i++){
-                            for (int j = 0; j< width; j++)
+                                byte[] message = Serializer.serialize(new Command(new Payload(new Point(j, i),map.chceckBlock(new Point(j, i)))));
+                                //outputStream.writeInt(message.length);
+                                outputStream.write(message);
                                 oldMap[i][j] = map.chceckBlock(new Point(j, i));
-                        }
-
-                        byte[] message = Serializer.serialize(new Command(changedPoints));
-                        outputStream.writeInt(message.length);
-                        outputStream.write(message);
+                            }
                     }
                 } catch (IOException e) {
                     log.info(e.getMessage());
@@ -187,7 +184,7 @@ public class Server{
                         log.info("Player starts game");
                         snake.enable();
                         Timer timer = new Timer();
-                        timer.scheduleAtFixedRate(sendMap(outputStream, snake), 30, 30);
+                        timer.scheduleAtFixedRate(sendWholeMap(outputStream), 100, 100);
                         sendWholeMap(outputStream);
                         break;
                     case SHUTDOWN:

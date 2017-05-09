@@ -23,6 +23,7 @@ public class Command implements Serializable {
     Type type;
 
     Point point;
+    Payload payload;
     String string;
     KeyCode keyCode;
     Vector<Payload> vector;
@@ -35,6 +36,10 @@ public class Command implements Serializable {
 
     public Command(Vector<Payload> vector){
         this.vector = vector;
+    }
+
+    public Command(Payload payload){
+        this.payload = payload;
     }
 
     public Command(Type type, KeyCode keyCode){
@@ -67,4 +72,6 @@ public class Command implements Serializable {
     public synchronized KeyCode getKeyCode(){
         return keyCode;
     }
+
+    public synchronized Payload getPayload(){ return payload; }
 }
