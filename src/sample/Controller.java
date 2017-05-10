@@ -1,5 +1,6 @@
 package sample;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
@@ -8,12 +9,14 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 
+import java.awt.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
@@ -131,17 +134,19 @@ public class Controller implements Initializable{
         }
     }
 
-    public synchronized String updateString(String oldString, String newString){
+    public String updateString(String oldString, String newString){
         char[] oldArray = oldString.toCharArray();
         int i = 0;
+        Vector<Payload> vector = new Vector<>();
         for(char c : oldArray){
             if(c != newString.charAt(i)){
-                setImage(i, newString.charAt(i));
+                vector.add(new Payload(new Point(i%width, i/width), newString.charAt(i)));
             }
                 i++;
         }
+        Platform.runLater(()->vector.forEach(this::setImage));
+        log.info(newString);
         return newString;
-        //log.info(string);
     }
 
 
@@ -156,33 +161,33 @@ public class Controller implements Initializable{
         apple_pic = new Image( "File:src/Graphics/Apple.png" );
     }
 
-    public void setImage(int stringIndex, char c){
+    public void setImage(Payload payload){
 
-        switch(c)
+        switch(payload.getChar())
         {
             case '#':
-                gc.drawImage(wall_pic, (stringIndex%width)*blockSize, (stringIndex/width)*blockSize, blockSize, blockSize);
+                gc.drawImage(wall_pic, payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
                 break;
             case ' ':
-                gc.drawImage(earth_pic,(stringIndex%width)*blockSize, (stringIndex/width)*blockSize, blockSize, blockSize);
+                gc.drawImage(earth_pic,payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
                 break;
             case '>':
-                gc.drawImage(headRight_pic, (stringIndex%width)*blockSize, (stringIndex/width)*blockSize, blockSize, blockSize);
+                gc.drawImage(headRight_pic, payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
                 break;
             case '<':
-                gc.drawImage(headLeft_pic, (stringIndex%width)*blockSize, (stringIndex/width)*blockSize, blockSize, blockSize);
+                gc.drawImage(headLeft_pic, payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
                 break;
             case '^':
-                gc.drawImage(headUp_pic, (stringIndex%width)*blockSize, (stringIndex/width)*blockSize, blockSize, blockSize);
+                gc.drawImage(headUp_pic, payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
                 break;
             case 'V':
-                gc.drawImage(headDown_pic, (stringIndex%width)*blockSize, (stringIndex/width)*blockSize, blockSize, blockSize);
+                gc.drawImage(headDown_pic, payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
                 break;
             case 'O':
-                gc.drawImage(tail_pic, (stringIndex%width)*blockSize, (stringIndex/width)*blockSize, blockSize, blockSize);
+                gc.drawImage(tail_pic, payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
                 break;
             case '.':
-                gc.drawImage(apple_pic, (stringIndex%width)*blockSize, (stringIndex/width)*blockSize, blockSize, blockSize);
+                gc.drawImage(apple_pic, payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
                 break;
         }
     }

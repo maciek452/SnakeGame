@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  */
 public class Server{
 
-    static int canvasX = 1200, canvasY = 600, height = 50;
+    static int canvasX = 1200, canvasY = 600, height = 30;
     static double blockSize = canvasY / height;
     static int width = (int) (canvasX/ blockSize);
 
@@ -80,7 +80,7 @@ public class Server{
                     log.info("Client "+numberOfSnakes+" starts game.");
                     snake1 = new Snake(new Point(5,5));
                     executor.submit(()->receiveCommands(inputStream, outputStream, snake1));
-                    timer.scheduleAtFixedRate(runSnake(snake1), 30, 100);
+                    timer.scheduleAtFixedRate(runSnake(snake1), 30, 500);
                     numberOfSnakes++;
                     break;
                 case 1:
