@@ -145,7 +145,7 @@ public class Controller implements Initializable{
                 i++;
         }
         Platform.runLater(()->vector.forEach(this::setImage));
-        log.info(newString);
+        //log.info(newString);
         return newString;
     }
 

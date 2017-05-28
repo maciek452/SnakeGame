@@ -14,13 +14,18 @@ public class Map {
     char[][] map;
     int N, M;
     Random rand = new Random();
+    int dotX, dotY;
+    AppleTask appleTask;
+    Thread appleThread;
 
     public Map(){
-
     }
 
     public Map(int height, int M){
-        map  =new char[height][M];
+        appleTask = new AppleTask(this);
+        appleThread = new Thread(appleTask);
+
+        map  = new char[height][M];
         this.N = height;
         this.M = M;
         for(int i = 0; i < height; i++ ) {
@@ -37,17 +42,26 @@ public class Map {
         return map[point.y][point.x];
     }
 
-    public void makeDot(){
+    public synchronized void makeDot(){
         Point tmp = new Point();
         do{
             tmp.x = rand.nextInt(M-2)+1;
             tmp.y = rand.nextInt(N-2)+1;
 
         }while (chceckBlock(tmp)!=' ');
+        dotX = tmp.x;
+        dotY = tmp.y;
         map[tmp.y][tmp.x] = '.';
+        appleTask.resetTime();
     }
 
-    public void erasePiece(Point point){
+    public void startAppleTask(){
+        if(!appleThread.isAlive()){
+            appleThread.start();
+        }
+    }
+
+    public synchronized void erasePiece(Point point){
         map[point.y][point.x] = ' ';
     }
 

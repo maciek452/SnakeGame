@@ -80,7 +80,7 @@ public class Server{
                     log.info("Client "+numberOfSnakes+" starts game.");
                     snake1 = new Snake(new Point(5,5));
                     executor.submit(()->receiveCommands(inputStream, outputStream, snake1));
-                    timer.scheduleAtFixedRate(runSnake(snake1), 30, 500);
+                    timer.scheduleAtFixedRate(runSnake(snake1), 30, 100);
                     numberOfSnakes++;
                     break;
                 case 1:
@@ -186,6 +186,7 @@ public class Server{
                         Timer timer = new Timer();
                         timer.scheduleAtFixedRate(sendWholeMap(outputStream), 100, 100);
                         sendWholeMap(outputStream);
+                        map.startAppleTask();
                         break;
                     case SHUTDOWN:
                         log.info("Player disconected.");
