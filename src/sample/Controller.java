@@ -1,13 +1,10 @@
 package sample;
 
-import com.sun.javafx.scene.layout.region.Margins;
-import com.sun.xml.internal.ws.commons.xmlutil.Converter;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
@@ -146,9 +143,22 @@ public class Controller implements Initializable{
         //drawAllShapes(gc);
         Thread zegarek = new Thread(new odliczanie());
         zegarek.start();
+        getNumberOfPlayers();
+        Thread fred = new Thread(new odliczanie());
+        fred.start();
         executor.submit(() -> getChangesFromServer());
 
     }
+
+    private void getNumberOfPlayers(){
+        try{
+            number_of_players = inputStream.readInt();
+            log.info("Number of players: "+number_of_players);
+        }catch (IOException e){
+            log.info("Can't send point.");
+        }
+    }
+
     public class odliczanie implements Runnable {
         public synchronized void run()
         {
@@ -171,11 +181,17 @@ public class Controller implements Initializable{
     public synchronized void getChangesFromServer(){
         try{
             while(true) {
-                //int length = inputStream.readInt();
+                int length = inputStream.readInt();
                 //log.info(""+length+"\n");
-                byte[] message = new byte[width*height+271];
+                byte[] message = new byte[length];
                 inputStream.readFully(message, 0, message.length);
                 Command command = (Command) Serializer.deserialize(message);
+                score[0] = command.score1;
+                score[1] = command.score2;
+                score[2] = command.score3;
+//                for(int i = 0; i < 3; i++)
+//                    log.info("Score nr"+(i+1)+" : "+score[i]);
+
                 if(string == ""){
                     string = command.getString();
                     drawAllShapes(gc);

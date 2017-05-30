@@ -16,12 +16,13 @@ public class Snake {
     private static SnakeChar snakeChar = new SnakeChar();
     Vector<Point> pieces = new Vector<Point>();
     Point point;
-    int lenght, score = 0;
+    int lenght, score;
     Direction direction;
     boolean enabled = false;
     boolean movingEnabled = true;
 
     public Snake(Point point){
+        this.score = 0;
         this.point = point;
         this.lenght = 3;
         Point tmp = new Point(point);

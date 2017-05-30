@@ -142,8 +142,22 @@ public class Server{
                             string += map.chceckBlock(new Point(j, i));
                         //string += "\n";
                     }
-                    byte[] message = Serializer.serialize(new Command(string));
-                    //outputStream.writeInt(message.length);
+                    byte[] message;
+                    switch (numberOfSnakes){
+                        case 1:
+                            message = Serializer.serialize(new Command(string, snake1.score, 0, 0));
+                            break;
+                        case 2:
+                            message = Serializer.serialize(new Command(string, snake1.score, snake2.score, 0));
+                            break;
+                        case 3:
+                            message = Serializer.serialize(new Command(string, snake1.score, snake2.score, snake3.score));
+                            break;
+                        default:
+                            message = Serializer.serialize(new Command(string, 0, 0, 0));
+                            break;
+                    }
+                    outputStream.writeInt(message.length);
                     outputStream.write(message);
                 } catch (IOException e) {
                     log.info(e.getMessage());
@@ -173,7 +187,6 @@ public class Server{
 
             while (true) {
                 //oczekiwanie na kolejną komendę
-
                 length = inputStream.readInt();
                 message = new byte[length];
                 inputStream.readFully(message, 0, message.length);
@@ -186,6 +199,7 @@ public class Server{
                         break;
                     case START:
                         setPlayersReady();
+                        outputStream.writeInt(numberOfSnakes);
                         if(getPlayersReady() == 3) waiter.interrupt();
                         else {
                             try {
@@ -208,16 +222,16 @@ public class Server{
 //                        snake.deleteSnake(map);
 //                        numberOfSnakes--;
                         break;
-                    case SEND_MAP_STRING:
-                        String string = new String();
-                        for (int i = 0; i < height; i++) {
-                            for (int j = 0; j < width; j++)
-                                string += map.chceckBlock(new Point(j, i));
-                        }
-                        //log.info("Sending map");
-                        message = Serializer.serialize(new Command(string));
-                        outputStream.writeInt(message.length);
-                        outputStream.write(message);
+//                    case SEND_MAP_STRING:
+//                        String string = new String();
+//                        for (int i = 0; i < height; i++) {
+//                            for (int j = 0; j < width; j++)
+//                                string += map.chceckBlock(new Point(j, i));
+//                        }
+//                        //log.info("Sending map");
+//                        message = Serializer.serialize(new Command(string));
+//                        outputStream.writeInt(message.length);
+//                        outputStream.write(message);
                 }
             }
         } catch (EOFException e){

@@ -29,9 +29,17 @@ public class Command implements Serializable {
     Vector<Payload> vector;
     int ilosc, N;
     double blockSize;
+    int score1, score2, score3;
 
     public Command(String string){
         this.string = string;
+    }
+
+    public Command(String string, int score1, int score2, int score3){
+        this.string = string;
+        this.score1 = score1;
+        this.score2 = score2;
+        this.score3 = score3;
     }
 
     public Command(Vector<Payload> vector){
