@@ -34,14 +34,16 @@ public class Controller implements Initializable{
     private DataOutputStream outputStream;
     private DataInputStream inputStream;
     public GraphicsContext gc;
+    private String ip;
 
     int width, height;
     double blockSize;
-    Image earth_pic, wall_pic, tail_pic, headUp_pic,
-            headDown_pic, headLeft_pic, headRight_pic, apple_pic;
+    Image earth_pic, wall_pic, apple_pic;
+    Image[] tail_pic, headUp_pic,
+            headDown_pic, headLeft_pic, headRight_pic;
 
     private static final int PORT = 1337;
-
+    
     @Override
     public void initialize(URL location, ResourceBundle resources){
 
@@ -151,14 +153,22 @@ public class Controller implements Initializable{
 
 
     public void LoadGraphics() {
-        earth_pic = new Image( "File:src/Graphics/Grass.png" );
-        wall_pic = new Image( "File:src/Graphics/wall.png" );
-        tail_pic = new Image( "File:src/Graphics/snake.png" );
-        headUp_pic = new Image( "File:src/Graphics/snakeHeadUp.png" );
-        headDown_pic = new Image( "File:src/Graphics/snakeHeadDown.png" );
-        headLeft_pic = new Image( "File:src/Graphics/snakeHeadLeft.png" );
-        headRight_pic = new Image( "File:src/Graphics/snakeHeadRight.png" );
-        apple_pic = new Image( "File:src/Graphics/Apple.png" );
+        String tab[] = new String[]{"red", "aqua", "green"};
+        tail_pic = new Image[3];
+        headDown_pic = new Image[3];
+        headUp_pic = new Image[3];
+        headLeft_pic = new Image[3];
+        headRight_pic = new Image[3];
+        for (int i = 0; i < 3; i++) {
+            tail_pic[i] = new Image("File:src/Graphics/"+tab[i]+"/snake.png");
+            headUp_pic[i] = new Image("File:src/Graphics/"+tab[i]+"/snakeHeadUp.png");
+            headDown_pic[i] = new Image("File:src/Graphics/"+tab[i]+"/snakeHeadDown.png");
+            headLeft_pic[i] = new Image("File:src/Graphics/"+tab[i]+"/snakeHeadLeft.png");
+            headRight_pic[i] = new Image("File:src/Graphics/"+tab[i]+"/snakeHeadRight.png");
+        }
+        earth_pic = new Image("File:src/Graphics/Grass.png");
+        wall_pic = new Image("File:src/Graphics/wall.png");
+        apple_pic = new Image("File:src/Graphics/Apple.png");
     }
 
     public void setImage(Payload payload){
@@ -172,19 +182,49 @@ public class Controller implements Initializable{
                 gc.drawImage(earth_pic,payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
                 break;
             case '>':
-                gc.drawImage(headRight_pic, payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
+                gc.drawImage(headRight_pic[0], payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
                 break;
             case '<':
-                gc.drawImage(headLeft_pic, payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
+                gc.drawImage(headLeft_pic[0], payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
                 break;
             case '^':
-                gc.drawImage(headUp_pic, payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
+                gc.drawImage(headUp_pic[0], payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
                 break;
             case 'V':
-                gc.drawImage(headDown_pic, payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
+                gc.drawImage(headDown_pic[0], payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
                 break;
             case 'O':
-                gc.drawImage(tail_pic, payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
+                gc.drawImage(tail_pic[0], payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
+                break;
+            case 'd':
+                gc.drawImage(headRight_pic[1], payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
+                break;
+            case 'a':
+                gc.drawImage(headLeft_pic[1], payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
+                break;
+            case 'w':
+                gc.drawImage(headUp_pic[1], payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
+                break;
+            case 's':
+                gc.drawImage(headDown_pic[1], payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
+                break;
+            case 'Q':
+                gc.drawImage(tail_pic[1], payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
+                break;
+            case 'h':
+                gc.drawImage(headRight_pic[2], payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
+                break;
+            case 'f':
+                gc.drawImage(headLeft_pic[2], payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
+                break;
+            case 't':
+                gc.drawImage(headUp_pic[2], payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
+                break;
+            case 'g':
+                gc.drawImage(headDown_pic[2], payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
+                break;
+            case 'Y':
+                gc.drawImage(tail_pic[2], payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
                 break;
             case '.':
                 gc.drawImage(apple_pic, payload.getPoint().getX()*blockSize, payload.getPoint().getY()*blockSize, blockSize, blockSize);
@@ -216,23 +256,63 @@ public class Controller implements Initializable{
                     break;
                 case '>':
                     gc.drawImage(earth_pic, x, y, blockSize, blockSize);
-                    gc.drawImage(headRight_pic, x, y, blockSize, blockSize);
+                    gc.drawImage(headRight_pic[0], x, y, blockSize, blockSize);
                     break;
                 case '<':
                     gc.drawImage(earth_pic, x, y, blockSize, blockSize);
-                    gc.drawImage(headLeft_pic, x, y, blockSize, blockSize);
+                    gc.drawImage(headLeft_pic[0], x, y, blockSize, blockSize);
                     break;
                 case '^':
                     gc.drawImage(earth_pic, x, y, blockSize, blockSize);
-                    gc.drawImage(headUp_pic, x, y, blockSize, blockSize);
+                    gc.drawImage(headUp_pic[0], x, y, blockSize, blockSize);
                     break;
                 case 'V':
                     gc.drawImage(earth_pic, x, y, blockSize, blockSize);
-                    gc.drawImage(headDown_pic, x, y, blockSize, blockSize);
+                    gc.drawImage(headDown_pic[0], x, y, blockSize, blockSize);
                     break;
                 case 'O':
                     gc.drawImage(earth_pic, x, y, blockSize, blockSize);
-                    gc.drawImage(tail_pic, x, y, blockSize, blockSize);
+                    gc.drawImage(tail_pic[0], x, y, blockSize, blockSize);
+                    break;
+                case 'd':
+                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
+                    gc.drawImage(headRight_pic[1], x, y, blockSize, blockSize);
+                    break;
+                case 'a':
+                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
+                    gc.drawImage(headLeft_pic[1], x, y, blockSize, blockSize);
+                    break;
+                case 'w':
+                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
+                    gc.drawImage(headUp_pic[1], x, y, blockSize, blockSize);
+                    break;
+                case 's':
+                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
+                    gc.drawImage(headDown_pic[1], x, y, blockSize, blockSize);
+                    break;
+                case 'Q':
+                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
+                    gc.drawImage(tail_pic[1], x, y, blockSize, blockSize);
+                    break;
+                case 'h':
+                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
+                    gc.drawImage(headRight_pic[2], x, y, blockSize, blockSize);
+                    break;
+                case 'f':
+                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
+                    gc.drawImage(headLeft_pic[2], x, y, blockSize, blockSize);
+                    break;
+                case 't':
+                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
+                    gc.drawImage(headUp_pic[2], x, y, blockSize, blockSize);
+                    break;
+                case 'g':
+                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
+                    gc.drawImage(headDown_pic[2], x, y, blockSize, blockSize);
+                    break;
+                case 'Y':
+                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
+                    gc.drawImage(tail_pic[2], x, y, blockSize, blockSize);
                     break;
                 case '.':
                     gc.drawImage(earth_pic, x, y, blockSize, blockSize);

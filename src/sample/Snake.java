@@ -11,6 +11,9 @@ import java.util.Vector;
  */
 public class Snake {
 
+    private int snakeId;
+    private static boolean[] isSnakeIdTaken = new boolean[3];
+    private static SnakeChar snakeChar = new SnakeChar();
     Vector<Point> pieces = new Vector<Point>();
     Point point;
     int lenght;
@@ -27,9 +30,24 @@ public class Snake {
         pieces.add(new Point(tmp));
         tmp.x-=1;
         pieces.add(new Point(tmp));
-
         enabled = false;
         direction = Direction.RIGHT;
+
+        for (int i=0;i<3;i++) {
+            if(!isSnakeIdTaken[i]) {
+                switch (i) {
+                    case 0:
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        break;
+                }
+                isSnakeIdTaken[i] = true;
+                snakeId = i;
+                break;
+            }
+        }
     }
 
     public void enlargeSnake(Point point){
@@ -109,21 +127,21 @@ public class Snake {
             if(i == 0) {
                 switch (direction) {
                     case RIGHT:
-                        map.setSnakePiece(piece, '>');
+                        map.setSnakePiece(piece, snakeChar.get(direction, snakeId));
                         break;
                     case LEFT:
-                        map.setSnakePiece(piece, '<');
+                        map.setSnakePiece(piece, snakeChar.get(direction, snakeId));
                         break;
                     case UP:
-                        map.setSnakePiece(piece, '^');
+                        map.setSnakePiece(piece, snakeChar.get(direction, snakeId));
                         break;
                     case DOWN:
-                        map.setSnakePiece(piece, 'V');
+                        map.setSnakePiece(piece, snakeChar.get(direction, snakeId));
                         break;
                 }
             }
             else
-                map.setSnakePiece(piece, 'O');
+                map.setSnakePiece(piece, snakeChar.get(snakeId));
             ++i;
         }
     }
@@ -132,6 +150,7 @@ public class Snake {
         pieces.forEach(i->map.setSnakePiece(i, ' '));
         pieces.removeAllElements();
         snakeUpdate(map);
+        isSnakeIdTaken[snakeId] = false;
     }
 
     public void enable(){
@@ -141,4 +160,5 @@ public class Snake {
     public void disable(){
         enabled = false;
     }
+
 }
