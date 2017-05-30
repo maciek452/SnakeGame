@@ -31,7 +31,7 @@ public class Controller implements Initializable{
 
     @FXML
     public Canvas canvas;
-    public Label state, player1, player2, player3, scoretable, Stoper, sekundy;
+    public Label state, player1, player2, player3, scoretable, Stoper, sekundy, mark;
     private String string;
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     private static Logger log = Logger.getLogger(Server.class.getCanonicalName());
@@ -40,14 +40,14 @@ public class Controller implements Initializable{
     private DataInputStream inputStream;
     public GraphicsContext gc;
     public String ip;
-    int score[] = new int[3];
+    int score[] = new int[3], minut = 0;
     int width, height, number_of_players = 0;
     double blockSize;
     Image earth_pic, wall_pic, apple_pic;
     Image[] tail_pic, headUp_pic,
             headDown_pic, headLeft_pic, headRight_pic;
     static long startTime;
-    int iterator = 0;
+    int iterator = 0, minutnik;
     static boolean zegar = false;
     private static final int PORT = 1337;
 
@@ -135,14 +135,17 @@ public class Controller implements Initializable{
     public void start(){
         startTime = System.currentTimeMillis();
         zegar = true;
+        Stoper.setOpacity(1.0);
+        sekundy.setOpacity(1.0);
+        mark.setOpacity(1.0);
         state.setText("Oczekuje...");
         //setLabels();
         string = "";
         makeCommand(Command.Type.START);
         //getChangesFromServer();
         //drawAllShapes(gc);
-        Thread fred = new Thread(new odliczanie());
-        fred.start();
+        Thread zegarek = new Thread(new odliczanie());
+        zegarek.start();
         executor.submit(() -> getChangesFromServer());
 
     }
@@ -152,8 +155,10 @@ public class Controller implements Initializable{
             while(true)
             {
                 if (zegar == true)
-                    Platform.runLater(() -> Stoper.setText(String.valueOf(1000*60*15-((System.currentTimeMillis() - startTime) / 1000) + "." + (System.currentTimeMillis() - startTime) % 1000)));
-                    //Platform.runLater(() -> sekundy.setText(String.valueOf(1000*60*15-((System.currentTimeMillis() - startTime) / 1000) + "." + (System.currentTimeMillis() - startTime) % 1000)%60);
+                {
+                    Platform.runLater(() -> Stoper.setText(String.valueOf((1000*60*15-((System.currentTimeMillis() - startTime) / 1000))/60000)));
+                    Platform.runLater(() -> sekundy.setText(String.valueOf((1000*60*15-((System.currentTimeMillis() - startTime) / 1000))%60)));
+                }
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {

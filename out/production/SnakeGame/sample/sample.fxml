@@ -6,7 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane alignment="center" hgap="10" onKeyPressed="#handle" prefHeight="640.0" prefWidth="1300.0" vgap="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<GridPane alignment="center" hgap="10" onKeyPressed="#handle" prefHeight="640.0" prefWidth="1365.0" vgap="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <columnConstraints>
       <ColumnConstraints />
       <ColumnConstraints />
@@ -16,17 +16,33 @@
       <RowConstraints />
    </rowConstraints>
    <children>
-      <HBox prefHeight="640.0" prefWidth="1300.0">
+      <HBox prefHeight="630.0" prefWidth="1385.0">
          <children>
             <Canvas fx:id="canvas" height="600.0" width="1200.0" />
-            <VBox prefHeight="600.0" prefWidth="100.0">
+            <VBox prefHeight="630.0" prefWidth="179.0">
                <children>
-                  <Button fx:id="start" mnemonicParsing="false" onAction="#start" prefHeight="31.0" prefWidth="86.0" text="Start" />
-                  <Label fx:id="state" prefHeight="42.0" prefWidth="87.0" text="Stan" />
-                  <Label fx:id="scoretable" opacity="0.0" prefHeight="21.0" prefWidth="89.0" text="Punktacja" />
-                  <Label fx:id="player1" opacity="0.0" prefHeight="21.0" prefWidth="90.0" text="Gracz 1" />
-                  <Label fx:id="player2" opacity="0.0" prefHeight="21.0" prefWidth="93.0" text="Gracz 2" />
-                  <Label fx:id="player3" opacity="0.0" prefHeight="21.0" prefWidth="91.0" text="Gracz 3" />
+                  <Button fx:id="start" mnemonicParsing="false" onAction="#start" prefHeight="31.0" prefWidth="169.0" text="Start" />
+                  <Label fx:id="state" prefHeight="42.0" prefWidth="174.0" text="Stan" />
+                  <Label fx:id="scoretable" opacity="0.0" prefHeight="21.0" prefWidth="181.0" text="Punktacja" />
+                  <Label fx:id="player1" opacity="0.0" prefHeight="21.0" prefWidth="224.0" text="Gracz 1" />
+                  <Label fx:id="player2" opacity="0.0" prefHeight="21.0" prefWidth="210.0" text="Gracz 2" />
+                  <Label fx:id="player3" opacity="0.0" prefHeight="21.0" prefWidth="212.0" text="Gracz 3" />
+                  <HBox prefHeight="169.0" prefWidth="90.0">
+                     <children>
+                        <Label fx:id="Stoper" alignment="CENTER" opacity="0.0" prefHeight="169.0" prefWidth="70.0" text="Zegar" textAlignment="CENTER">
+                           <font>
+                              <Font size="48.0" />
+                           </font></Label>
+                        <Label fx:id="mark" alignment="CENTER" opacity="0.0" prefHeight="169.0" prefWidth="15.0" text=":">
+                           <font>
+                              <Font size="48.0" />
+                           </font></Label>
+                        <Label fx:id="sekundy" opacity="0.0" prefHeight="169.0" prefWidth="70.0" text="Label">
+                           <font>
+                              <Font size="48.0" />
+                           </font></Label>
+                     </children>
+                  </HBox>
                </children>
             </VBox>
          </children>
