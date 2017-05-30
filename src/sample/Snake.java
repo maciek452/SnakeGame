@@ -16,7 +16,7 @@ public class Snake {
     private static SnakeChar snakeChar = new SnakeChar();
     Vector<Point> pieces = new Vector<Point>();
     Point point;
-    int lenght;
+    int lenght, score = 0;
     Direction direction;
     boolean enabled = false;
     boolean movingEnabled = true;
@@ -52,6 +52,7 @@ public class Snake {
 
     public void enlargeSnake(Point point){
         lenght++;
+        score++;
         pieces.add(0, new Point(point));
     }
 

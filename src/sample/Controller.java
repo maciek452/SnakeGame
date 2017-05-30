@@ -5,6 +5,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
@@ -27,6 +29,7 @@ public class Controller implements Initializable{
 
     @FXML
     public Canvas canvas;
+    public Label state, player1, player2, player3, scoretable;
     private String string;
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     private static Logger log = Logger.getLogger(Server.class.getCanonicalName());
@@ -35,7 +38,7 @@ public class Controller implements Initializable{
     private DataInputStream inputStream;
     public GraphicsContext gc;
     private String ip;
-
+    int score[] = new int[3];
     int width, height;
     double blockSize;
     Image earth_pic, wall_pic, apple_pic;
@@ -106,6 +109,9 @@ public class Controller implements Initializable{
 
     @FXML
     public void start(){
+        player1.setOpacity(1.0);
+        state.setText("Oczekuje...");
+        //player1.setText(score[0]);
         string = "";
         makeCommand(Command.Type.START);
         //getChangesFromServer();
