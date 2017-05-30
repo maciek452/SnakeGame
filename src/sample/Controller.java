@@ -34,7 +34,7 @@ public class Controller implements Initializable{
     private DataOutputStream outputStream;
     private DataInputStream inputStream;
     public GraphicsContext gc;
-    private String ip;
+    public String ip;
 
     int width, height;
     double blockSize;
@@ -47,12 +47,9 @@ public class Controller implements Initializable{
     @Override
     public void initialize(URL location, ResourceBundle resources){
 
+
         try {
-            socket = new Socket(
-                    "127.0.0.1"
-                    //"192.168.0.68"
-                    //"192.168.0.97"
-                    , PORT);
+            socket = new Socket(ip, PORT);
             outputStream = new DataOutputStream(socket.getOutputStream());
             inputStream = new DataInputStream(socket.getInputStream());
 

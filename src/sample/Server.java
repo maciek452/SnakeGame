@@ -116,7 +116,7 @@ public class Server{
         }
     }
 
-    private static synchronized TimerTask sendWholeMap(DataOutputStream outputStream) {
+    private static synchronized TimerTask sendWholeMap(DataOutputStream outputStream, Snake snake) {
         return new TimerTask() {
             @Override
             public void run() {
@@ -132,27 +132,6 @@ public class Server{
                     outputStream.write(message);
                 } catch (IOException e) {
                     log.info(e.getMessage());
-                }
-            }
-        };
-    }
-
-    private static synchronized TimerTask sendMap(DataOutputStream outputStream, Snake snake) {
-        return new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    for (int i = 1; i < height -1; i++) {
-                        for (int j = 1; j < width -1; j++)
-                            if(map.chceckBlock(new Point(j, i)) != oldMap[i][j]) {
-                                byte[] message = Serializer.serialize(new Command(new Payload(new Point(j, i),map.chceckBlock(new Point(j, i)))));
-                                //outputStream.writeInt(message.length);
-                                outputStream.write(message);
-                                oldMap[i][j] = map.chceckBlock(new Point(j, i));
-                            }
-                    }
-                } catch (IOException e) {
-                    log.info(e.getMessage());
                     snake.disable();
                     snake.deleteSnake(map);
                     numberOfSnakes--;
@@ -161,6 +140,7 @@ public class Server{
             }
         };
     }
+
     private static void receiveCommands(DataInputStream inputStream, DataOutputStream outputStream, Snake snake){
         byte[] message;
         int length;
@@ -184,8 +164,8 @@ public class Server{
                         log.info("Player starts game");
                         snake.enable();
                         Timer timer = new Timer();
-                        timer.scheduleAtFixedRate(sendWholeMap(outputStream), 100, 100);
-                        sendWholeMap(outputStream);
+                        timer.scheduleAtFixedRate(sendWholeMap(outputStream, snake), 100, 100);
+                        sendWholeMap(outputStream, snake);
                         map.startAppleTask();
                         break;
                     case SHUTDOWN:

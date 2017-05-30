@@ -21,6 +21,9 @@ public class Main extends Application{
         controller.gc = gc;
         //controller.drawAllShapes(gc);
         controller.LoadGraphics();
+        controller.ip = getParameters().getRaw().get(0);
+
+
         primaryStage.setScene(new Scene(root));
         primaryStage.setWidth(1400);
         primaryStage.setHeight(640);
