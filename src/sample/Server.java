@@ -148,7 +148,7 @@ public class Server{
             public void run() {
                 System.exit(0);
             }
-        }, 10*1000);
+        }, 15*60*1000);
     }
     private static void receiveCommands(DataInputStream inputStream, DataOutputStream outputStream, Snake snake){
         byte[] message;

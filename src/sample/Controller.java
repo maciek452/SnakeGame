@@ -31,7 +31,7 @@ public class Controller implements Initializable{
 
     @FXML
     public Canvas canvas;
-    public Label state, player1, player2, player3, scoretable;
+    public Label state, player1, player2, player3, scoretable, Stoper, sekundy;
     private String string;
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     private static Logger log = Logger.getLogger(Server.class.getCanonicalName());
@@ -46,9 +46,11 @@ public class Controller implements Initializable{
     Image earth_pic, wall_pic, apple_pic;
     Image[] tail_pic, headUp_pic,
             headDown_pic, headLeft_pic, headRight_pic;
-
+    static long startTime;
+    int iterator = 0;
+    static boolean zegar = false;
     private static final int PORT = 1337;
-    
+
     @Override
     public void initialize(URL location, ResourceBundle resources){
 
@@ -131,14 +133,34 @@ public class Controller implements Initializable{
 
     @FXML
     public void start(){
-
+        startTime = System.currentTimeMillis();
+        zegar = true;
         state.setText("Oczekuje...");
         //setLabels();
         string = "";
         makeCommand(Command.Type.START);
         //getChangesFromServer();
         //drawAllShapes(gc);
+        Thread fred = new Thread(new odliczanie());
+        fred.start();
         executor.submit(() -> getChangesFromServer());
+
+    }
+    public class odliczanie implements Runnable {
+        public synchronized void run()
+        {
+            while(true)
+            {
+                if (zegar == true)
+                    Platform.runLater(() -> Stoper.setText(String.valueOf(1000*60*15-((System.currentTimeMillis() - startTime) / 1000) + "." + (System.currentTimeMillis() - startTime) % 1000)));
+                    //Platform.runLater(() -> sekundy.setText(String.valueOf(1000*60*15-((System.currentTimeMillis() - startTime) / 1000) + "." + (System.currentTimeMillis() - startTime) % 1000)%60);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public synchronized void getChangesFromServer(){
@@ -353,4 +375,5 @@ public class Controller implements Initializable{
             y += blockSize;
         }
     }
+
 }

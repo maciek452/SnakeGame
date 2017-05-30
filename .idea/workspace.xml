@@ -5,6 +5,7 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/sample/Controller.java" afterPath="$PROJECT_DIR$/src/sample/Controller.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/sample/Server.java" afterPath="$PROJECT_DIR$/src/sample/Server.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/sample/sample.fxml" afterPath="$PROJECT_DIR$/src/sample/sample.fxml" />
     </list>
     <ignored path="JavaFxApplication.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -33,7 +34,7 @@
       <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/sample/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="395">
+            <state relative-caret-position="461">
               <caret line="28" column="36" lean-forward="true" selection-start-line="28" selection-start-column="36" selection-end-line="28" selection-end-column="36" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -42,11 +43,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Server.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Server.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/sample/Server.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="142">
-              <caret line="148" column="31" lean-forward="true" selection-start-line="148" selection-start-column="31" selection-end-line="148" selection-end-column="31" />
+            <state relative-caret-position="-276">
+              <caret line="150" column="14" lean-forward="false" selection-start-line="150" selection-start-column="14" selection-end-line="150" selection-end-column="14" />
               <folding>
                 <element signature="e#4154#5018#0" expanded="true" />
                 <element signature="e#5017#5018#0" expanded="true" />
@@ -57,12 +58,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Controller.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Controller.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/sample/Controller.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="273">
-              <caret line="134" column="8" lean-forward="false" selection-start-line="134" selection-start-column="8" selection-end-line="134" selection-end-column="8" />
+            <state relative-caret-position="308">
+              <caret line="155" column="22" lean-forward="false" selection-start-line="155" selection-start-column="22" selection-end-line="155" selection-end-column="22" />
               <folding>
+                <element signature="method#initialize#0;class#Controller#0" expanded="false" />
+                <element signature="method#handle#0;class#Controller#0" expanded="false" />
+                <element signature="method#makeCommand#0;class#Controller#0" expanded="false" />
+                <element signature="method#changelabel#0;class#Controller#0" expanded="false" />
+                <element signature="method#setLabels#0;class#Controller#0" expanded="false" />
+                <element signature="method#updateString#0;class#Controller#0" expanded="false" />
+                <element signature="method#LoadGraphics#0;class#Controller#0" expanded="false" />
                 <element signature="method#setImage#0;class#Controller#0" expanded="false" />
                 <element signature="method#drawAllShapes#0;class#Controller#0" expanded="false" />
               </folding>
@@ -86,8 +94,8 @@
             <state />
           </provider>
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="171">
-              <caret line="20" column="35" lean-forward="false" selection-start-line="20" selection-start-column="35" selection-end-line="20" selection-end-column="35" />
+            <state relative-caret-position="369">
+              <caret line="29" column="33" lean-forward="false" selection-start-line="29" selection-start-column="33" selection-end-line="29" selection-end-column="33" />
               <folding />
             </state>
           </provider>
@@ -106,6 +114,7 @@
     <findStrings>
       <find>start</find>
       <find>number</find>
+      <find>odliczanie</find>
       <find>numberOfSnakes</find>
     </findStrings>
   </component>
@@ -121,17 +130,17 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/sample/sample.fxml" />
         <option value="$PROJECT_DIR$/src/sample/Command.java" />
         <option value="$PROJECT_DIR$/.idea/workspace.xml" />
         <option value="$PROJECT_DIR$/src/sample/Map.java" />
         <option value="$PROJECT_DIR$/src/sample/SnakeChar.java" />
         <option value="$PROJECT_DIR$/src/sample/Snake.java" />
         <option value="$PROJECT_DIR$/src/sample/Main.java" />
-        <option value="$PROJECT_DIR$/../SnakeGameII/src/sample/Controller.java" />
-        <option value="$PROJECT_DIR$/src/sample/Controller.java" />
         <option value="$PROJECT_DIR$/../SnakeGameII/src/sample/Server.java" />
         <option value="$PROJECT_DIR$/src/sample/Server.java" />
+        <option value="$PROJECT_DIR$/src/sample/sample.fxml" />
+        <option value="$PROJECT_DIR$/../SnakeGameII/src/sample/Controller.java" />
+        <option value="$PROJECT_DIR$/src/sample/Controller.java" />
       </list>
     </option>
   </component>
@@ -703,7 +712,14 @@
       <option name="project" value="LOCAL" />
       <updated>1496155225297</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Timer plansza">
+      <created>1496158113929</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1496158113929</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -803,7 +819,8 @@
     <MESSAGE value="Snake grafika" />
     <MESSAGE value="Działa" />
     <MESSAGE value="Scores" />
-    <option name="LAST_COMMIT_MESSAGE" value="Scores" />
+    <MESSAGE value="Timer plansza" />
+    <option name="LAST_COMMIT_MESSAGE" value="Timer plansza" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -824,13 +841,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/sample/Payload.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="3" lean-forward="false" selection-start-line="4" selection-start-column="3" selection-end-line="4" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/sample/Point.java" />
     <entry file="file://$PROJECT_DIR$/src/sample/Command.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -874,6 +884,13 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
+            <element signature="method#initialize#0;class#Controller#0" expanded="false" />
+            <element signature="method#handle#0;class#Controller#0" expanded="false" />
+            <element signature="method#makeCommand#0;class#Controller#0" expanded="false" />
+            <element signature="method#changelabel#0;class#Controller#0" expanded="false" />
+            <element signature="method#setLabels#0;class#Controller#0" expanded="false" />
+            <element signature="method#updateString#0;class#Controller#0" expanded="false" />
+            <element signature="method#LoadGraphics#0;class#Controller#0" expanded="false" />
             <element signature="method#setImage#0;class#Controller#0" expanded="false" />
             <element signature="method#drawAllShapes#0;class#Controller#0" expanded="false" />
           </folding>
@@ -925,6 +942,13 @@
         <state relative-caret-position="850">
           <caret line="66" column="30" lean-forward="false" selection-start-line="66" selection-start-column="30" selection-end-line="66" selection-end-column="30" />
           <folding>
+            <element signature="method#initialize#0;class#Controller#0" expanded="false" />
+            <element signature="method#handle#0;class#Controller#0" expanded="false" />
+            <element signature="method#makeCommand#0;class#Controller#0" expanded="false" />
+            <element signature="method#changelabel#0;class#Controller#0" expanded="false" />
+            <element signature="method#setLabels#0;class#Controller#0" expanded="false" />
+            <element signature="method#updateString#0;class#Controller#0" expanded="false" />
+            <element signature="method#LoadGraphics#0;class#Controller#0" expanded="false" />
             <element signature="method#setImage#0;class#Controller#0" expanded="false" />
             <element signature="method#drawAllShapes#0;class#Controller#0" expanded="false" />
           </folding>
@@ -976,6 +1000,13 @@
         <state relative-caret-position="34">
           <caret line="2" column="25" lean-forward="false" selection-start-line="2" selection-start-column="25" selection-end-line="2" selection-end-column="25" />
           <folding>
+            <element signature="method#initialize#0;class#Controller#0" expanded="false" />
+            <element signature="method#handle#0;class#Controller#0" expanded="false" />
+            <element signature="method#makeCommand#0;class#Controller#0" expanded="false" />
+            <element signature="method#changelabel#0;class#Controller#0" expanded="false" />
+            <element signature="method#setLabels#0;class#Controller#0" expanded="false" />
+            <element signature="method#updateString#0;class#Controller#0" expanded="false" />
+            <element signature="method#LoadGraphics#0;class#Controller#0" expanded="false" />
             <element signature="method#setImage#0;class#Controller#0" expanded="false" />
             <element signature="method#drawAllShapes#0;class#Controller#0" expanded="false" />
           </folding>
@@ -1016,6 +1047,13 @@
         <state relative-caret-position="68">
           <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
           <folding>
+            <element signature="method#initialize#0;class#Controller#0" expanded="false" />
+            <element signature="method#handle#0;class#Controller#0" expanded="false" />
+            <element signature="method#makeCommand#0;class#Controller#0" expanded="false" />
+            <element signature="method#changelabel#0;class#Controller#0" expanded="false" />
+            <element signature="method#setLabels#0;class#Controller#0" expanded="false" />
+            <element signature="method#updateString#0;class#Controller#0" expanded="false" />
+            <element signature="method#LoadGraphics#0;class#Controller#0" expanded="false" />
             <element signature="method#setImage#0;class#Controller#0" expanded="false" />
             <element signature="method#drawAllShapes#0;class#Controller#0" expanded="false" />
           </folding>
@@ -1111,40 +1149,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/sample/sample.fxml">
-      <provider editor-type-id="JavaFX-Scene-Builder">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="171">
-          <caret line="20" column="35" lean-forward="false" selection-start-line="20" selection-start-column="35" selection-end-line="20" selection-end-column="35" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_121/javafx-src.zip!/javafx/scene/control/Label.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="228">
           <caret line="52" column="13" lean-forward="false" selection-start-line="52" selection-start-column="13" selection-end-line="52" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/sample/Controller.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="273">
-          <caret line="134" column="8" lean-forward="false" selection-start-line="134" selection-start-column="8" selection-end-line="134" selection-end-column="8" />
-          <folding>
-            <element signature="method#setImage#0;class#Controller#0" expanded="false" />
-            <element signature="method#drawAllShapes#0;class#Controller#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../SnakeGameII/src/sample/Controller.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-135">
-          <caret line="71" column="93" lean-forward="true" selection-start-line="71" selection-start-column="93" selection-end-line="71" selection-end-column="93" />
           <folding />
         </state>
       </provider>
@@ -1181,9 +1189,41 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/../SnakeGame/src/sample/Controller.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/sample/sample.fxml">
+      <provider editor-type-id="JavaFX-Scene-Builder">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="369">
+          <caret line="29" column="33" lean-forward="false" selection-start-line="29" selection-start-column="33" selection-end-line="29" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/sample/Server.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-276">
+          <caret line="150" column="14" lean-forward="false" selection-start-line="150" selection-start-column="14" selection-end-line="150" selection-end-column="14" />
+          <folding>
+            <element signature="e#4154#5018#0" expanded="true" />
+            <element signature="e#5017#5018#0" expanded="true" />
+            <element signature="e#5126#5253#0" expanded="true" />
+            <element signature="e#5252#5253#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/sample/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="395">
+        <state relative-caret-position="461">
           <caret line="28" column="36" lean-forward="true" selection-start-line="28" selection-start-column="36" selection-end-line="28" selection-end-column="36" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -1191,15 +1231,28 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/sample/Server.java">
+    <entry file="file://$PROJECT_DIR$/../SnakeGameII/src/sample/Controller.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="142">
-          <caret line="148" column="31" lean-forward="true" selection-start-line="148" selection-start-column="31" selection-end-line="148" selection-end-column="31" />
+        <state relative-caret-position="198">
+          <caret line="112" column="8" lean-forward="false" selection-start-line="112" selection-start-column="8" selection-end-line="112" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/sample/Controller.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="308">
+          <caret line="155" column="22" lean-forward="false" selection-start-line="155" selection-start-column="22" selection-end-line="155" selection-end-column="22" />
           <folding>
-            <element signature="e#4154#5018#0" expanded="true" />
-            <element signature="e#5017#5018#0" expanded="true" />
-            <element signature="e#5126#5253#0" expanded="true" />
-            <element signature="e#5252#5253#0" expanded="true" />
+            <element signature="method#initialize#0;class#Controller#0" expanded="false" />
+            <element signature="method#handle#0;class#Controller#0" expanded="false" />
+            <element signature="method#makeCommand#0;class#Controller#0" expanded="false" />
+            <element signature="method#changelabel#0;class#Controller#0" expanded="false" />
+            <element signature="method#setLabels#0;class#Controller#0" expanded="false" />
+            <element signature="method#updateString#0;class#Controller#0" expanded="false" />
+            <element signature="method#LoadGraphics#0;class#Controller#0" expanded="false" />
+            <element signature="method#setImage#0;class#Controller#0" expanded="false" />
+            <element signature="method#drawAllShapes#0;class#Controller#0" expanded="false" />
           </folding>
         </state>
       </provider>
