@@ -140,7 +140,16 @@ public class Server{
             }
         };
     }
-
+    private static void terminate()
+    {
+        Timer zegar = new Timer();
+        zegar.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                System.exit(0);
+            }
+        }, 10*1000);
+    }
     private static void receiveCommands(DataInputStream inputStream, DataOutputStream outputStream, Snake snake){
         byte[] message;
         int length;
@@ -161,6 +170,7 @@ public class Server{
                         snake.changeDirection(command.getKeyCode());
                         break;
                     case START:
+                        terminate();
                         log.info("Player starts game");
                         snake.enable();
                         Timer timer = new Timer();

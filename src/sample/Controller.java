@@ -1,5 +1,7 @@
 package sample;
 
+import com.sun.javafx.scene.layout.region.Margins;
+import com.sun.xml.internal.ws.commons.xmlutil.Converter;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -39,7 +41,7 @@ public class Controller implements Initializable{
     public GraphicsContext gc;
     public String ip;
     int score[] = new int[3];
-    int width, height;
+    int width, height, number_of_players = 0;
     double blockSize;
     Image earth_pic, wall_pic, apple_pic;
     Image[] tail_pic, headUp_pic,
@@ -98,16 +100,40 @@ public class Controller implements Initializable{
             e.printStackTrace();
         }
     }
-
+    void changelabel(int lp)
+    {
+        Label label = new Label();
+        switch(lp)
+        {
+            case 0:
+                label=player1;
+                break;
+            case 1:
+                label=player2;
+                break;
+            case 2:
+                label=player3;
+        }
+        label.setOpacity(1.0);
+       // label.setText(String.valueOf(score[lp]));
+    }
+    public void setLabels()
+    {
+        scoretable.setOpacity(1.0);
+        for(int i=0;i<number_of_players;i++)
+        {
+            changelabel(i);
+        }
+    }
     public void sendShutdownSignal(){
         makeCommand(Command.Type.SHUTDOWN);
     }
 
     @FXML
     public void start(){
-        player1.setOpacity(1.0);
+
         state.setText("Oczekuje...");
-        //player1.setText(score[0]);
+        //setLabels();
         string = "";
         makeCommand(Command.Type.START);
         //getChangesFromServer();
