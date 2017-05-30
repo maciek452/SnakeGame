@@ -55,7 +55,7 @@ public class Map {
         appleTask.resetTime();
     }
 
-    public void startAppleTask(){
+    public synchronized void startAppleTask(){
         if(!appleThread.isAlive()){
             appleThread.start();
         }

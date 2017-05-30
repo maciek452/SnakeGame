@@ -33,7 +33,10 @@ public class Server{
     private static Socket socket;
 
     private static int numberOfSnakes = 0;
+    private static int playersReady = 0;
     private static Snake snake1, snake2, snake3;
+
+    private static Thread waiter;
 
     public static void main(String[] args)throws IOException{
         map = new Map(height, width);
@@ -42,6 +45,18 @@ public class Server{
             for (int j = 0; j< width; j++)
             oldMap[i][j] = map.chceckBlock(new Point(j, i));
         }
+
+        waiter = new Thread(() ->{
+            while(getPlayersReady() < 2){
+            };
+            long time = System.currentTimeMillis();
+            long currentTime = System.currentTimeMillis();
+            while(currentTime - time < 10000){
+                if(Thread.interrupted()) return;
+                currentTime = System.currentTimeMillis();
+            }
+        });
+        waiter.start();
         log.info("Server starts.");
         while(true) {
             try (ServerSocket serverSocket = new ServerSocket(PORT)) {
@@ -148,7 +163,7 @@ public class Server{
             public void run() {
                 System.exit(0);
             }
-        }, 15*60*1000);
+        }, 60*1000*15);
     }
     private static void receiveCommands(DataInputStream inputStream, DataOutputStream outputStream, Snake snake){
         byte[] message;
@@ -170,6 +185,15 @@ public class Server{
                         snake.changeDirection(command.getKeyCode());
                         break;
                     case START:
+                        setPlayersReady();
+                        if(getPlayersReady() == 3) waiter.interrupt();
+                        else {
+                            try {
+                                waiter.join();
+                            } catch (InterruptedException e) {
+                                log.info(e.getMessage());
+                            }
+                        }
                         terminate();
                         log.info("Player starts game");
                         snake.enable();
@@ -206,5 +230,11 @@ public class Server{
 
     }
 
+    private static synchronized void setPlayersReady(){
+        playersReady++;
+    }
 
+    private static synchronized int getPlayersReady(){
+        return playersReady;
+    }
 }
