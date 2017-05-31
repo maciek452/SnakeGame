@@ -29,17 +29,9 @@
                   <Label fx:id="player3" opacity="0.0" prefHeight="21.0" prefWidth="212.0" text="Gracz 3" />
                   <HBox prefHeight="169.0" prefWidth="90.0">
                      <children>
-                        <Label fx:id="Stoper" alignment="CENTER" opacity="0.0" prefHeight="169.0" prefWidth="70.0" text="Zegar" textAlignment="CENTER">
+                        <Label fx:id="Stoper" alignment="CENTER" opacity="0.0" prefHeight="169.0" prefWidth="212.0" text="Zegar" textAlignment="CENTER">
                            <font>
-                              <Font size="48.0" />
-                           </font></Label>
-                        <Label fx:id="mark" alignment="CENTER" opacity="0.0" prefHeight="169.0" prefWidth="15.0" text=":">
-                           <font>
-                              <Font size="48.0" />
-                           </font></Label>
-                        <Label fx:id="sekundy" opacity="0.0" prefHeight="169.0" prefWidth="70.0" text="Label">
-                           <font>
-                              <Font size="48.0" />
+                              <Font size="32.0" />
                            </font></Label>
                      </children>
                   </HBox>

@@ -30,7 +30,7 @@ public class Controller implements Initializable{
     public Canvas canvas;
     public Label state, player1, player2, player3, scoretable, Stoper, sekundy, mark;
     private String string;
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private ExecutorService executor = Executors.newFixedThreadPool(2);
     private static Logger log = Logger.getLogger(Server.class.getCanonicalName());
     private Socket socket;
     private DataOutputStream outputStream;
@@ -43,7 +43,7 @@ public class Controller implements Initializable{
     Image earth_pic, wall_pic, apple_pic;
     Image[] tail_pic, headUp_pic,
             headDown_pic, headLeft_pic, headRight_pic;
-    static long startTime;
+    static long endTime;
     int iterator = 0, minutnik;
     static boolean zegar = false;
     private static final int PORT = 1337;
@@ -129,25 +129,15 @@ public class Controller implements Initializable{
     }
 
     @FXML
-    public void start(){
-        startTime = System.currentTimeMillis();
-        zegar = true;
+    public void start() {
+        endTime = System.currentTimeMillis() + 15 * 60 * 1000;
         Stoper.setOpacity(1.0);
-        sekundy.setOpacity(1.0);
-        mark.setOpacity(1.0);
         state.setText("Oczekuje...");
-        //setLabels();
         string = "";
         makeCommand(Command.Type.START);
-        //getChangesFromServer();
-        //drawAllShapes(gc);
-        Thread zegarek = new Thread(new odliczanie());
-        zegarek.start();
         getNumberOfPlayers();
-        Thread fred = new Thread(new odliczanie());
-        fred.start();
         executor.submit(() -> getChangesFromServer());
-
+        executor.submit(() -> odliczanie());
     }
 
     private void getNumberOfPlayers(){
@@ -159,21 +149,17 @@ public class Controller implements Initializable{
         }
     }
 
-    public class odliczanie implements Runnable {
-        public synchronized void run()
-        {
-            while(true)
-            {
-                if (zegar == true)
-                {
-                    Platform.runLater(() -> Stoper.setText(String.valueOf((1000*60*15-((System.currentTimeMillis() - startTime) / 1000))/60000)));
-                    Platform.runLater(() -> sekundy.setText(String.valueOf((1000*60*15-((System.currentTimeMillis() - startTime) / 1000))%60)));
-                }
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+    public void odliczanie() {
+        while (true) {
+            if (zegar == true) {
+                long timeLeft = endTime - System.currentTimeMillis();
+                Platform.runLater(() ->
+                        Stoper.setText(format("%02d:%02d:%03d", timeLeft / 60000, (timeLeft / 1000) % 60, timeLeft % 1000)));
+            }
+            try {
+                Thread.sleep(9);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -195,6 +181,7 @@ public class Controller implements Initializable{
                 if(string == ""){
                     string = command.getString();
                     drawAllShapes(gc);
+                    zegar = true;
                 }else {
                     string = updateString(string, command.getString());
                 }
@@ -221,7 +208,6 @@ public class Controller implements Initializable{
         //log.info(newString);
         return newString;
     }
-
 
     public void LoadGraphics() {
         String tab[] = new String[]{"red", "aqua", "green"};

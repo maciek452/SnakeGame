@@ -79,8 +79,6 @@ public class Server{
         };
     }
 
-
-
     private static void waitForClient() {
         try {
             DataInputStream inputStream = new DataInputStream(socket.getInputStream());
@@ -200,15 +198,15 @@ public class Server{
                     case START:
                         setPlayersReady();
                         outputStream.writeInt(numberOfSnakes);
-                        if(getPlayersReady() == 3) waiter.interrupt();
+                        if(getPlayersReady() == 2) waiter.interrupt();
                         else {
                             try {
                                 waiter.join();
+                                terminate();
                             } catch (InterruptedException e) {
                                 log.info(e.getMessage());
                             }
                         }
-                        terminate();
                         log.info("Player starts game");
                         snake.enable();
                         Timer timer = new Timer();
@@ -222,20 +220,10 @@ public class Server{
 //                        snake.deleteSnake(map);
 //                        numberOfSnakes--;
                         break;
-//                    case SEND_MAP_STRING:
-//                        String string = new String();
-//                        for (int i = 0; i < height; i++) {
-//                            for (int j = 0; j < width; j++)
-//                                string += map.chceckBlock(new Point(j, i));
-//                        }
-//                        //log.info("Sending map");
-//                        message = Serializer.serialize(new Command(string));
-//                        outputStream.writeInt(message.length);
-//                        outputStream.write(message);
                 }
             }
         } catch (EOFException e){
-            log.info("tu sie wyjebuje");
+            log.info("Server listener EOFException");
         } catch (SocketException e) {
             log.info("Nastąpiło rozłączenie");
         } catch (IOException | ClassNotFoundException e) {
