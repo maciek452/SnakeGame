@@ -8,9 +8,7 @@ import com.sun.javafx.scene.traversal.Direction;
  */
 public class SnakeChar {
     char[][] tab;
-
     SnakeChar(){
-
         tab = new char[][]{
                 {'>', 'd', 'h' },
                 {'<', 'a', 'f' },
@@ -19,7 +17,6 @@ public class SnakeChar {
                 {'O', 'Q', 'Y' }
         };
     }
-
     public char get(Direction dir, int snakeId){
         switch(dir){
             case RIGHT:
@@ -37,6 +34,4 @@ public class SnakeChar {
     public char get(int snakeId){
         return tab[4][snakeId];
     }
-
-
 }

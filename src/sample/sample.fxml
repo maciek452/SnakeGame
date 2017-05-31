@@ -22,8 +22,7 @@
             <VBox prefHeight="630.0" prefWidth="179.0">
                <children>
                   <Button fx:id="start" mnemonicParsing="false" onAction="#start" prefHeight="31.0" prefWidth="169.0" text="Start" />
-                  <Label fx:id="state" prefHeight="42.0" prefWidth="174.0" text="Stan" />
-                  <Label fx:id="scoretable" prefHeight="21.0" prefWidth="181.0" text="Punktacja" />
+                  <Label fx:id="scoreTable" prefHeight="21.0" prefWidth="181.0" text="Punktacja" />
                   <Label fx:id="player1" prefHeight="21.0" prefWidth="224.0" text="Gracz 1" />
                   <Label fx:id="player2" prefHeight="21.0" prefWidth="210.0" text="Gracz 2" />
                   <Label fx:id="player3" prefHeight="21.0" prefWidth="212.0" text="Gracz 3" />

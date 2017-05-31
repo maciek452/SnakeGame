@@ -7,7 +7,6 @@ import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
 public class Main extends Application{
     private Scene scene;
@@ -23,7 +22,6 @@ public class Main extends Application{
         //controller.drawAllShapes(gc);
         controller.LoadGraphics();
         controller.ip = getParameters().getRaw().get(0);
-
 
         primaryStage.setScene(new Scene(root));
         primaryStage.setWidth(1400);

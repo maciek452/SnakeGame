@@ -1,7 +1,6 @@
 package sample;
 
 import java.awt.*;
-import java.util.TimerTask;
 
 /**
  * Created by Dzejkob on 28.05.2017.
@@ -12,8 +11,8 @@ public class AppleTask implements Runnable {
 
     AppleTask(Map map){
         this.map = map;
-
     }
+
     public void run(){
         long newTime;
         resetTime();
@@ -23,7 +22,6 @@ public class AppleTask implements Runnable {
                 map.erasePiece(new Point(map.dotX, map.dotY));
                 map.makeDot();
             }
-
         }
     }
 

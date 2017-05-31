@@ -29,7 +29,7 @@ public class Controller implements Initializable{
     @FXML
     public Canvas canvas;
     @FXML
-    public Label state, player1, player2, player3, scoretable, Stoper, sekundy, mark;
+    public Label player1, player2, player3, Stoper;
     private String string;
     private ExecutorService executor = Executors.newFixedThreadPool(2);
     private static Logger log = Logger.getLogger(Server.class.getCanonicalName());
@@ -37,16 +37,13 @@ public class Controller implements Initializable{
     private DataOutputStream outputStream;
     private DataInputStream inputStream;
     public GraphicsContext gc;
-    public String ip;
-    int score[] = new int[3], minut = 0;
     int width, height, number_of_players = 0;
     double blockSize;
     Image earth_pic, wall_pic, apple_pic;
-    Image[] tail_pic, headUp_pic,
-            headDown_pic, headLeft_pic, headRight_pic;
+    Image[] tail_pic, headUp_pic, headDown_pic, headLeft_pic, headRight_pic;
+    String ip;
     static long endTime;
-    int iterator = 0, minutnik;
-    static boolean zegar = false;
+    static boolean clock = false;
     private static final int PORT = 1337;
 
     @Override
@@ -68,7 +65,7 @@ public class Controller implements Initializable{
             inputStream.readFully(message, 0, message.length);
 
             Command command = (Command) Serializer.deserialize(message);
-            width = command.ilosc;
+            width = command.M;
             height = command.N;
             blockSize = command.blockSize;
             log.info(format("width = %d, matrix= %d, block size = %f", width, height, blockSize));
@@ -100,31 +97,6 @@ public class Controller implements Initializable{
             e.printStackTrace();
         }
     }
-    void changelabel(int lp)
-    {
-        Label label = new Label();
-        switch(lp)
-        {
-            case 0:
-                label=player1;
-                break;
-            case 1:
-                label=player2;
-                break;
-            case 2:
-                label=player3;
-        }
-        label.setOpacity(1.0);
-        label.setText(String.valueOf(score[lp]));
-    }
-    public void setLabels()
-    {
-        scoretable.setOpacity(1.0);
-        for(int i=0;i<number_of_players;i++)
-        {
-            changelabel(i);
-        }
-    }
     public void sendShutdownSignal(){
         makeCommand(Command.Type.SHUTDOWN);
     }
@@ -133,12 +105,11 @@ public class Controller implements Initializable{
     public void start() {
         endTime = System.currentTimeMillis() + 15 * 60 * 1000;
         Stoper.setOpacity(1.0);
-        state.setText("Oczekuje...");
         string = "";
         makeCommand(Command.Type.START);
         getNumberOfPlayers();
         executor.submit(() -> getChangesFromServer());
-        executor.submit(() -> odliczanie());
+        executor.submit(() -> countdown());
     }
 
     private void getNumberOfPlayers(){
@@ -150,11 +121,11 @@ public class Controller implements Initializable{
         }
     }
 
-    public void odliczanie() {
+    public void countdown() {
         while (true) {
-            if (zegar == true) {
+            if (clock == true) {
                 long timeLeft = endTime - System.currentTimeMillis();
-                Platform.runLater(() ->
+                Platform.runLater(() -> 
                         Stoper.setText(format("%02d:%02d:%03d", timeLeft / 60000, (timeLeft / 1000) % 60, timeLeft % 1000)));
             }
             try {
@@ -165,25 +136,24 @@ public class Controller implements Initializable{
         }
     }
 
+    private void setScores(Command command){
+        Platform.runLater(()->player1.setText( format("%d",command.score1*100)));
+        Platform.runLater(()->player2.setText( format("%d",command.score2*100)));
+        Platform.runLater(()->player3.setText( format("%d",command.score3*100)));
+    }
+
     public synchronized void getChangesFromServer(){
         try{
             while(true) {
                 int length = inputStream.readInt();
-                //log.info(""+length+"\n");
                 byte[] message = new byte[length];
                 inputStream.readFully(message, 0, message.length);
                 Command command = (Command) Serializer.deserialize(message);
-                score[0] = command.score1;
-                score[1] = command.score2;
-                score[2] = command.score3;
-                Platform.runLater(()->player1.setText( format("%d",score[0]*100)));
-                Platform.runLater(()->player2.setText( format("%d",score[1]*100)));
-                Platform.runLater(()->player3.setText( format("%d",score[2]*100)));
-
+                setScores(command);
                 if(string == ""){
                     string = command.getString();
                     drawAllShapes(gc);
-                    zegar = true;
+                    clock = true;
                 }else {
                     string = updateString(string, command.getString());
                 }
@@ -204,10 +174,9 @@ public class Controller implements Initializable{
             if(c != newString.charAt(i)){
                 vector.add(new Payload(new Point(i%width, i/width), newString.charAt(i)));
             }
-                i++;
+            i++;
         }
         Platform.runLater(()->vector.forEach(this::setImage));
-        //log.info(newString);
         return newString;
     }
 

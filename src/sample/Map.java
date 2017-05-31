@@ -38,7 +38,7 @@ public class Map {
         makeDot();
     }
 
-    public char chceckBlock(Point point){
+    public char checkBlock(Point point){
         return map[point.y][point.x];
     }
 
@@ -48,7 +48,7 @@ public class Map {
             tmp.x = rand.nextInt(M-2)+1;
             tmp.y = rand.nextInt(N-2)+1;
 
-        }while (chceckBlock(tmp)!=' ');
+        }while (checkBlock(tmp)!=' ');
         dotX = tmp.x;
         dotY = tmp.y;
         map[tmp.y][tmp.x] = '.';

@@ -58,9 +58,9 @@ public class Snake {
     }
 
     public boolean collision(Point point, Map map){
-        if(map.chceckBlock(point)==' ')
+        if(map.checkBlock(point)==' ')
             return false;
-        else if (map.chceckBlock(point)=='.') {
+        else if (map.checkBlock(point)=='.') {
             enlargeSnake(point);
             map.makeDot();
             return true;

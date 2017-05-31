@@ -3,7 +3,6 @@ package sample;
 import java.io.*;
 import java.util.logging.Logger;
 
-
 public class Serializer {
 
     private static Logger log = Logger.getLogger(Server.class.getCanonicalName());
@@ -22,16 +21,15 @@ public class Serializer {
             try(ObjectInputStream o = new ObjectInputStream(b)) {
                 return o.readObject();
            }catch (ObjectStreamException e){
-                log.info("wyjebało sie przy serializacji");
+                log.info("Serialization ObjectStreamException.");
            }catch (EOFException e)            {
-                log.info("wyjebało sie przy serializacji 2");
+                log.info("Serialization EOFException");
                 log.info(e.getMessage());
             }
             return  0;
         }catch (EOFException e){
-            log.info("wyjebało sie przy serializacji 3");
+            log.info("Serialization EOFException2");
         }
         return 0;
     }
-
 }

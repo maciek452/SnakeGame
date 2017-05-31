@@ -19,32 +19,20 @@ import java.util.logging.Logger;
  */
 public class Server{
 
-    static int canvasX = 1200, canvasY = 600, height = 30;
-    static double blockSize = canvasY / height;
-    static int width = (int) (canvasX/ blockSize);
-
+    private static int canvasX = 1200, canvasY = 600, height = 30;
+    private static double blockSize = canvasY / height;
+    private static int width = (int) (canvasX/ blockSize);
     private static Logger log = Logger.getLogger(Server.class.getCanonicalName());
-    static ExecutorService executor = Executors.newFixedThreadPool(6);
+    private static ExecutorService executor = Executors.newFixedThreadPool(6);
     private static final int PORT = 1337;
-
     private static Map map;
-    private static char[][] oldMap;
-
     private static Socket socket;
-
-    private static int numberOfSnakes = 0;
-    private static int playersReady = 0;
+    private static int numberOfSnakes = 0, playersReady = 0;
     private static Snake snake1, snake2, snake3;
-
     private static Thread waiter;
 
     public static void main(String[] args)throws IOException{
         map = new Map(height, width);
-        oldMap = new char[height][width];
-        for (int i = 0; i< height; i++){
-            for (int j = 0; j< width; j++)
-            oldMap[i][j] = map.chceckBlock(new Point(j, i));
-        }
 
         waiter = new Thread(() ->{
             while(getPlayersReady() < 2){
@@ -85,9 +73,7 @@ public class Server{
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             log.info("Client "+numberOfSnakes+" connected.");
             sendDimensions(outputStream);
-
             Timer timer = new Timer();
-
             switch (numberOfSnakes){
                 case 0:
                     log.info("Client "+numberOfSnakes+" starts game.");
@@ -112,7 +98,6 @@ public class Server{
                     log.info("Server has arleady 3 players.");
                     break;
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -137,8 +122,7 @@ public class Server{
                     String string = new String();
                     for (int i = 0; i < height; i++) {
                         for (int j = 0; j < width; j++)
-                            string += map.chceckBlock(new Point(j, i));
-                        //string += "\n";
+                            string += map.checkBlock(new Point(j, i));
                     }
                     byte[] message;
                     switch (numberOfSnakes){
@@ -169,8 +153,8 @@ public class Server{
     }
     private static void terminate()
     {
-        Timer zegar = new Timer();
-        zegar.schedule(new TimerTask() {
+        Timer clock = new Timer();
+        clock.schedule(new TimerTask() {
             @Override
             public void run() {
                 System.exit(0);
@@ -181,7 +165,7 @@ public class Server{
         byte[] message;
         int length;
         try {
-            log.info("Reciving from client"+numberOfSnakes);
+            log.info("Receiving from client"+numberOfSnakes);
 
             while (true) {
                 //oczekiwanie na kolejną komendę
@@ -215,7 +199,7 @@ public class Server{
                         map.startAppleTask();
                         break;
                     case SHUTDOWN:
-                        log.info("Player disconected.");
+                        log.info("Player disconnected.");
 //                        snake.disable();
 //                        snake.deleteSnake(map);
 //                        numberOfSnakes--;
@@ -225,11 +209,10 @@ public class Server{
         } catch (EOFException e){
             log.info("Server listener EOFException");
         } catch (SocketException e) {
-            log.info("Nastąpiło rozłączenie");
+            log.info("Disconnection took place.");
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-
     }
 
     private static synchronized void setPlayersReady(){
