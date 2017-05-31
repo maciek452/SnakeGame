@@ -28,6 +28,7 @@ public class Controller implements Initializable{
 
     @FXML
     public Canvas canvas;
+    @FXML
     public Label state, player1, player2, player3, scoretable, Stoper, sekundy, mark;
     private String string;
     private ExecutorService executor = Executors.newFixedThreadPool(2);
@@ -114,7 +115,7 @@ public class Controller implements Initializable{
                 label=player3;
         }
         label.setOpacity(1.0);
-       // label.setText(String.valueOf(score[lp]));
+        label.setText(String.valueOf(score[lp]));
     }
     public void setLabels()
     {
@@ -175,8 +176,9 @@ public class Controller implements Initializable{
                 score[0] = command.score1;
                 score[1] = command.score2;
                 score[2] = command.score3;
-//                for(int i = 0; i < 3; i++)
-//                    log.info("Score nr"+(i+1)+" : "+score[i]);
+                Platform.runLater(()->player1.setText( format("%d",score[0]*100)));
+                Platform.runLater(()->player2.setText( format("%d",score[1]*100)));
+                Platform.runLater(()->player3.setText( format("%d",score[2]*100)));
 
                 if(string == ""){
                     string = command.getString();

@@ -65,7 +65,7 @@ public class Map {
         map[point.y][point.x] = ' ';
     }
 
-    public void setSnakePiece(Point point, char x){
+    public synchronized void setSnakePiece(Point point, char x){
         map[point.y][point.x] = x;
     }
 

@@ -23,10 +23,10 @@
                <children>
                   <Button fx:id="start" mnemonicParsing="false" onAction="#start" prefHeight="31.0" prefWidth="169.0" text="Start" />
                   <Label fx:id="state" prefHeight="42.0" prefWidth="174.0" text="Stan" />
-                  <Label fx:id="scoretable" opacity="0.0" prefHeight="21.0" prefWidth="181.0" text="Punktacja" />
-                  <Label fx:id="player1" opacity="0.0" prefHeight="21.0" prefWidth="224.0" text="Gracz 1" />
-                  <Label fx:id="player2" opacity="0.0" prefHeight="21.0" prefWidth="210.0" text="Gracz 2" />
-                  <Label fx:id="player3" opacity="0.0" prefHeight="21.0" prefWidth="212.0" text="Gracz 3" />
+                  <Label fx:id="scoretable" prefHeight="21.0" prefWidth="181.0" text="Punktacja" />
+                  <Label fx:id="player1" prefHeight="21.0" prefWidth="224.0" text="Gracz 1" />
+                  <Label fx:id="player2" prefHeight="21.0" prefWidth="210.0" text="Gracz 2" />
+                  <Label fx:id="player3" prefHeight="21.0" prefWidth="212.0" text="Gracz 3" />
                   <HBox prefHeight="169.0" prefWidth="90.0">
                      <children>
                         <Label fx:id="Stoper" alignment="CENTER" opacity="0.0" prefHeight="169.0" prefWidth="212.0" text="Zegar" textAlignment="CENTER">
