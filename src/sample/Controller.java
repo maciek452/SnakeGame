@@ -30,7 +30,7 @@ public class Controller implements Initializable{
     public Canvas canvas;
     @FXML
     public Label player1, player2, player3, Stoper;
-    private String string;
+    private String mapa;
     private ExecutorService executor = Executors.newFixedThreadPool(2);
     private static Logger log = Logger.getLogger(Server.class.getCanonicalName());
     private Socket socket;
@@ -105,7 +105,7 @@ public class Controller implements Initializable{
     public void start() {
         endTime = System.currentTimeMillis() + 15 * 60 * 1000;
         Stoper.setOpacity(1.0);
-        string = "";
+        mapa = "";
         makeCommand(Command.Type.START);
         getNumberOfPlayers();
         executor.submit(() -> getChangesFromServer());
@@ -150,12 +150,12 @@ public class Controller implements Initializable{
                 inputStream.readFully(message, 0, message.length);
                 Command command = (Command) Serializer.deserialize(message);
                 setScores(command);
-                if(string == ""){
-                    string = command.getString();
+                if(mapa == ""){
+                    mapa = command.getString();
                     drawAllShapes(gc);
                     clock = true;
                 }else {
-                    string = updateString(string, command.getString());
+                    mapa = updateString(mapa, command.getString());
                 }
             }
         }catch (IOException e){
@@ -273,7 +273,7 @@ public class Controller implements Initializable{
         {
             for(int j = 0; j < width; j++)
             {
-                switch(string.charAt(i*width+j))
+                switch(mapa.charAt(i*width+j))
             {
                 case '#':
                     gc.drawImage(earth_pic, x, y, blockSize, blockSize);
