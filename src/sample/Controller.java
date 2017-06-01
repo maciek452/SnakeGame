@@ -71,7 +71,7 @@ public class Controller implements Initializable{
             log.info(format("width = %d, matrix= %d, block size = %f", width, height, blockSize));
 
         }catch (IOException e){
-            log.info("Can't send point.");
+            log.info("Can't receive dimensions.");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             log.info("Can't find class inputStream.");
@@ -103,17 +103,17 @@ public class Controller implements Initializable{
 
     @FXML
     public void start() {
-        endTime = System.currentTimeMillis() + 15 * 60 * 1000;
         Stoper.setOpacity(1.0);
         makeCommand(Command.Type.START);
-        getNumberOfPlayers();
+        getNumberOfPlayersAndTime();
         executor.submit(() -> getChangesFromServer());
         executor.submit(() -> countdown());
     }
 
-    private void getNumberOfPlayers(){
+    private void getNumberOfPlayersAndTime(){
         try{
             number_of_players = inputStream.readInt();
+            endTime = inputStream.readLong();
             log.info("Number of players: "+number_of_players);
         }catch (IOException e){
             log.info("Can't get number of players.");
@@ -124,7 +124,7 @@ public class Controller implements Initializable{
         while (true) {
             if (clock == true) {
                 long timeLeft = endTime - System.currentTimeMillis();
-                Platform.runLater(() -> 
+                Platform.runLater(() ->
                         Stoper.setText(format("%02d:%02d:%03d", timeLeft / 60000, (timeLeft / 1000) % 60, timeLeft % 1000)));
             }
             try {

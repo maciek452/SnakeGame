@@ -3,7 +3,6 @@ package sample;
 import javafx.scene.input.KeyCode;
 
 import java.io.Serializable;
-import java.util.Vector;
 
 /**
  * Created by Maciek on 27.03.2017.
@@ -12,6 +11,8 @@ public class Command implements Serializable {
     public enum Type{
         START,
         CHANGE_DIRECTION,
+        MAP,
+        TIME,
         SHUTDOWN
     }
 
@@ -23,6 +24,7 @@ public class Command implements Serializable {
     int score1, score2, score3;
 
     public Command(String string, int score1, int score2, int score3){
+        this.type =type;
         this.string = string;
         this.score1 = score1;
         this.score2 = score2;

@@ -23,32 +23,24 @@ public class Server{
     private static double blockSize = canvasY / height;
     private static int width = (int) (canvasX/ blockSize);
     private static Logger log = Logger.getLogger(Server.class.getCanonicalName());
-    private static ExecutorService executor = Executors.newFixedThreadPool(6);
+    private static ExecutorService executor = Executors.newFixedThreadPool(7);
     private static final int PORT = 1337;
     private static Map map;
     private static Socket socket;
     private static int numberOfSnakes = 0, playersReady = 0;
     private static Snake snake1, snake2, snake3;
-    private static Thread waiter;
+    private static long time = 60*1000*15, endTime;
+
 
     public static void main(String[] args)throws IOException{
         map = new Map(height, width);
-
-        waiter = new Thread(() ->{
-            while(getPlayersReady() < 2){}
-            long time = System.currentTimeMillis();
-            long currentTime = System.currentTimeMillis();
-            while(currentTime - time < 10000){
-                if(Thread.interrupted()) return;
-                currentTime = System.currentTimeMillis();
-            }
-        });
-        waiter.start();
         log.info("Server starts.");
+
+        terminate();
+        endTime = System.currentTimeMillis() + time;
         while(true) {
             try (ServerSocket serverSocket = new ServerSocket(PORT)) {
                 socket = serverSocket.accept();
-                //Oczekiwania na połączenie od klienta po stronie serwerowej
                 waitForClient();
             } catch (IOException e) {
                 log.info("Can't setup server on this port number.");
@@ -61,7 +53,7 @@ public class Server{
             @Override
             public void run() {
                 if(snake.enabled)
-                snake.makeMove(map);
+                    snake.makeMove(map);
             }
         };
     }
@@ -82,7 +74,7 @@ public class Server{
                     numberOfSnakes++;
                     break;
                 case 1:
-                    snake2 = new Snake(new Point(7,7));
+                    snake2 = new Snake(new Point(5,7));
                     executor.submit(()->receiveCommands(inputStream, outputStream, snake2));
                     timer.scheduleAtFixedRate(runSnake(snake2), 30, 100);
                     numberOfSnakes++;
@@ -94,7 +86,7 @@ public class Server{
                     numberOfSnakes++;
                     break;
                 default:
-                    log.info("Server has arleady 3 players.");
+                    log.info("Server has already 3 players.");
                     break;
             }
         } catch (IOException e) {
@@ -158,8 +150,10 @@ public class Server{
             public void run() {
                 System.exit(0);
             }
-        }, 60*1000*15);
+        }, time);
     }
+
+
     private static void receiveCommands(DataInputStream inputStream, DataOutputStream outputStream, Snake snake){
         byte[] message;
         int length;
@@ -181,15 +175,7 @@ public class Server{
                     case START:
                         setPlayersReady();
                         outputStream.writeInt(numberOfSnakes);
-                        if(getPlayersReady() == 2) waiter.interrupt();
-                        else {
-                            try {
-                                waiter.join();
-                                terminate();
-                            } catch (InterruptedException e) {
-                                log.info(e.getMessage());
-                            }
-                        }
+                        outputStream.writeLong(endTime);
                         log.info("Player starts game");
                         snake.enable();
                         Timer timer = new Timer();
