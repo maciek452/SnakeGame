@@ -113,8 +113,16 @@ public class Controller implements Initializable{
 
     private void getNumberOfPlayersAndTime(){
         try{
-            number_of_players = inputStream.readInt();
-            endTime = inputStream.readLong();
+            int length = inputStream.readInt();
+            byte[] message = new byte[length];
+            inputStream.readFully(message, 0, message.length);
+            try {
+                Command command = (Command) Serializer.deserialize(message);
+                number_of_players = command.numberOfPlayers;
+                endTime = command.time;
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
             log.info("Number of players: "+number_of_players);
         }catch (IOException e){
             log.info("Can't get number of players.");
@@ -157,13 +165,15 @@ public class Controller implements Initializable{
                 byte[] message = new byte[length];
                 inputStream.readFully(message, 0, message.length);
                 Command command = (Command) Serializer.deserialize(message);
-                setScores(command);
-                if(mapa==null){
-                    mapa = command.getString();
-                    drawAllShapes(gc);
-                    clock = true;
-                }else {
-                    mapa = updateString(mapa, command.getString());
+                if(command.getType() == Command.Type.MAP) {
+                    setScores(command);
+                    if (mapa == null) {
+                        mapa = command.getString();
+                        drawAllShapes(gc);
+                        clock = true;
+                    } else {
+                        mapa = updateString(mapa, command.getString());
+                    }
                 }
             }
         }catch (IOException e){

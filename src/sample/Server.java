@@ -117,16 +117,16 @@ public class Server{
                     byte[] message;
                     switch (numberOfSnakes){
                         case 1:
-                            message = Serializer.serialize(new Command(string, snake1.score, 0, 0));
+                            message = Serializer.serialize(new Command(Command.Type.MAP, string, snake1.score, 0, 0));
                             break;
                         case 2:
-                            message = Serializer.serialize(new Command(string, snake1.score, snake2.score, 0));
+                            message = Serializer.serialize(new Command(Command.Type.MAP,string, snake1.score, snake2.score, 0));
                             break;
                         case 3:
-                            message = Serializer.serialize(new Command(string, snake1.score, snake2.score, snake3.score));
+                            message = Serializer.serialize(new Command(Command.Type.MAP,string, snake1.score, snake2.score, snake3.score));
                             break;
                         default:
-                            message = Serializer.serialize(new Command(string, 0, 0, 0));
+                            message = Serializer.serialize(new Command(Command.Type.MAP,string, 0, 0, 0));
                             break;
                     }
                     outputStream.writeInt(message.length);
@@ -173,8 +173,7 @@ public class Server{
                         break;
                     case START:
                         setPlayersReady();
-                        outputStream.writeInt(numberOfSnakes);
-                        outputStream.writeLong(endTime);
+                        sendData(outputStream);
                         log.info("Player starts game");
                         snake.enable();
                         Timer timer = new Timer();
@@ -197,6 +196,17 @@ public class Server{
             log.info("Disconnection took place.");
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void sendData(DataOutputStream outputStream){
+        try {
+            byte [] message = Serializer.serialize(new Command(Command.Type.DATA, endTime, numberOfSnakes));
+            outputStream.writeInt(message.length);
+            outputStream.write(message);
+            return;
+        }catch(IOException e){
+            log.info(e.getMessage());
         }
     }
 
