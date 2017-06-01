@@ -10,6 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -34,6 +35,8 @@ public class Controller implements Initializable{
     private ExecutorService executor = Executors.newFixedThreadPool(2);
     private static Logger log = Logger.getLogger(Server.class.getCanonicalName());
     private Socket socket;
+    long timeLeft = 1;
+    Command command;
     private DataOutputStream outputStream;
     private DataInputStream inputStream;
     public GraphicsContext gc;
@@ -132,9 +135,19 @@ public class Controller implements Initializable{
     public void countdown() {
         while (true) {
             if (clock == true) {
-                long timeLeft = endTime - System.currentTimeMillis();
+                timeLeft = endTime - System.currentTimeMillis();
                 Platform.runLater(() ->
                         Stoper.setText(format("%02d:%02d:%03d", timeLeft / 60000, (timeLeft / 1000) % 60, timeLeft % 1000)));
+                if(timeLeft<=0)
+                {
+                    if(command.score1*100>command.score2 && command.score1*100>command.score3)
+                        JOptionPane.showMessageDialog(null, "Wygrał gracz nr1");
+                    else if (command.score2*100>command.score1 && command.score2*100>command.score3)
+                        JOptionPane.showMessageDialog(null, "Wygrał gracz nr2");
+                    else
+                        JOptionPane.showMessageDialog(null, "Wygrał gracz nr3");
+                    System.exit(0);
+                }
             }
             try {
                 Thread.sleep(9);
@@ -164,7 +177,7 @@ public class Controller implements Initializable{
                 int length = inputStream.readInt();
                 byte[] message = new byte[length];
                 inputStream.readFully(message, 0, message.length);
-                Command command = (Command) Serializer.deserialize(message);
+                command = (Command) Serializer.deserialize(message);
                 if(command.getType() == Command.Type.MAP) {
                     setScores(command);
                     if (mapa == null) {
