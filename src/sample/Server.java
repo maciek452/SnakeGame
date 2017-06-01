@@ -33,6 +33,10 @@ public class Server{
 
 
     public static void main(String[] args)throws IOException{
+
+
+        if(args.length>0)
+            time = Long.parseLong(args[0])*60*1000;
         map = new Map(height, width);
         log.info("Server starts.");
         terminate();

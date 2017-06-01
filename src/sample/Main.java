@@ -22,9 +22,9 @@ public class Main extends Application{
         Controller controller = loader.getController();
         setController(controller);
         windowparams(primaryStage, root);
-        runstage(primaryStage, controller);
+        runStage(primaryStage, controller);
     }
-    public void runstage(Stage stg, Controller controller)
+    public void runStage(Stage stg, Controller controller)
     {
         stg.show();
         stg.setOnCloseRequest(e -> {

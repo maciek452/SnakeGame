@@ -135,7 +135,7 @@ public class Controller implements Initializable{
     public void countdown() {
         while (true) {
             if (clock == true) {
-                timeLeft = endTime - System.currentTimeMillis();
+                timeLeft = (endTime - System.currentTimeMillis()) > 0 ? (endTime - System.currentTimeMillis()) : 0 ;
                 Platform.runLater(() ->
                         Stoper.setText(format("%02d:%02d:%03d", timeLeft / 60000, (timeLeft / 1000) % 60, timeLeft % 1000)));
                 if(timeLeft<=0)
@@ -158,22 +158,21 @@ public class Controller implements Initializable{
     }
     private void setScores(Command command){
         if(command.score1!= scores[0]) {
-            Platform.runLater(() -> player1.setText(format("%d", command.score1 * 100)));
             scores[0] = command.score1;
+            Platform.runLater(() -> player1.setText(format("%d", command.score1 * 100)));
         }
         if(command.score2!= scores[1]) {
-            Platform.runLater(() -> player1.setText(format("%d", command.score2 * 100)));
             scores[1] = command.score2;
+            Platform.runLater(() -> player2.setText(format("%d", command.score2 * 100)));
         }
         if(command.score3!= scores[2]) {
-            Platform.runLater(() -> player1.setText(format("%d", command.score3 * 100)));
             scores[2] = command.score3;
+            Platform.runLater(() -> player3.setText(format("%d", command.score3 * 100)));
         }
     }
-
     public synchronized void getChangesFromServer(){
         try{
-            while(true) {
+            while(timeLeft > 0) {
                 int length = inputStream.readInt();
                 byte[] message = new byte[length];
                 inputStream.readFully(message, 0, message.length);
@@ -190,7 +189,7 @@ public class Controller implements Initializable{
                 }
             }
         }catch (IOException e){
-            log.info("Can't send point.");
+            log.info("Can't get changes from server.");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             log.info("Can't find class inputStream.");
