@@ -7,10 +7,7 @@ import java.util.Random;
  * Created by Maciek on 26.03.2017.
  */
 
-
 public class Map {
-
-
     char[][] map;
     int N, M;
     Random rand = new Random();

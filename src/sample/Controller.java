@@ -105,7 +105,6 @@ public class Controller implements Initializable{
     public void start() {
         endTime = System.currentTimeMillis() + 15 * 60 * 1000;
         Stoper.setOpacity(1.0);
-        mapa = "";
         makeCommand(Command.Type.START);
         getNumberOfPlayers();
         executor.submit(() -> getChangesFromServer());
@@ -117,7 +116,7 @@ public class Controller implements Initializable{
             number_of_players = inputStream.readInt();
             log.info("Number of players: "+number_of_players);
         }catch (IOException e){
-            log.info("Can't send point.");
+            log.info("Can't get number of players.");
         }
     }
 
@@ -150,7 +149,7 @@ public class Controller implements Initializable{
                 inputStream.readFully(message, 0, message.length);
                 Command command = (Command) Serializer.deserialize(message);
                 setScores(command);
-                if(mapa == ""){
+                if(mapa==null){
                     mapa = command.getString();
                     drawAllShapes(gc);
                     clock = true;
@@ -200,7 +199,6 @@ public class Controller implements Initializable{
     }
 
     public void setImage(Payload payload){
-
         switch(payload.getChar())
         {
             case '#':
@@ -265,93 +263,13 @@ public class Controller implements Initializable{
         gc.fillRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
         gc.setFill(Color.GREEN);
         gc.setStroke(Color.DARKGREEN);
-        double x = 0;
-        double y = 0;
-       // gc.drawImage(earth_pic, 0, 0, this.canvas.getWidth(), this.canvas.getHeight());
+        for(int i = 0; i <mapa.length(); i++)
+            if(mapa.charAt(i)=='.')
+                setImage(new Payload(new Point(i%width, i/width),' '));
 
-        for(int i = 0; i < height; i++)
-        {
-            for(int j = 0; j < width; j++)
-            {
-                switch(mapa.charAt(i*width+j))
-            {
-                case '#':
-                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
-                    gc.drawImage(wall_pic, x, y, blockSize, blockSize);
-                    break;
-                case ' ':
-                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
-                    break;
-                case '>':
-                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
-                    gc.drawImage(headRight_pic[0], x, y, blockSize, blockSize);
-                    break;
-                case '<':
-                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
-                    gc.drawImage(headLeft_pic[0], x, y, blockSize, blockSize);
-                    break;
-                case '^':
-                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
-                    gc.drawImage(headUp_pic[0], x, y, blockSize, blockSize);
-                    break;
-                case 'V':
-                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
-                    gc.drawImage(headDown_pic[0], x, y, blockSize, blockSize);
-                    break;
-                case 'O':
-                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
-                    gc.drawImage(tail_pic[0], x, y, blockSize, blockSize);
-                    break;
-                case 'd':
-                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
-                    gc.drawImage(headRight_pic[1], x, y, blockSize, blockSize);
-                    break;
-                case 'a':
-                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
-                    gc.drawImage(headLeft_pic[1], x, y, blockSize, blockSize);
-                    break;
-                case 'w':
-                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
-                    gc.drawImage(headUp_pic[1], x, y, blockSize, blockSize);
-                    break;
-                case 's':
-                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
-                    gc.drawImage(headDown_pic[1], x, y, blockSize, blockSize);
-                    break;
-                case 'Q':
-                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
-                    gc.drawImage(tail_pic[1], x, y, blockSize, blockSize);
-                    break;
-                case 'h':
-                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
-                    gc.drawImage(headRight_pic[2], x, y, blockSize, blockSize);
-                    break;
-                case 'f':
-                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
-                    gc.drawImage(headLeft_pic[2], x, y, blockSize, blockSize);
-                    break;
-                case 't':
-                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
-                    gc.drawImage(headUp_pic[2], x, y, blockSize, blockSize);
-                    break;
-                case 'g':
-                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
-                    gc.drawImage(headDown_pic[2], x, y, blockSize, blockSize);
-                    break;
-                case 'Y':
-                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
-                    gc.drawImage(tail_pic[2], x, y, blockSize, blockSize);
-                    break;
-                case '.':
-                    gc.drawImage(earth_pic, x, y, blockSize, blockSize);
-                    gc.drawImage(apple_pic, x, y, blockSize, blockSize);
-                    break;
-            }
-                x += blockSize;
-            }
-            x = 0;
-            y += blockSize;
-        }
+        for (int i = 0; i < height; i++)
+            for (int j = 0; j < width; j++)
+                setImage(new Payload(new Point(j, i),mapa.charAt(i*width+j)));
     }
 
 }

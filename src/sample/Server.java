@@ -35,8 +35,7 @@ public class Server{
         map = new Map(height, width);
 
         waiter = new Thread(() ->{
-            while(getPlayersReady() < 2){
-            };
+            while(getPlayersReady() < 2){}
             long time = System.currentTimeMillis();
             long currentTime = System.currentTimeMillis();
             while(currentTime - time < 10000){

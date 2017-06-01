@@ -10,9 +10,9 @@ public class Payload implements Serializable {
     private char x;
     private Point point;
 
-    public Payload(Point point, char x){
+    public Payload(Point point, char c){
         this.point = point;
-        this.x = x;
+        this.x = c;
     }
 
     public char getChar(){
