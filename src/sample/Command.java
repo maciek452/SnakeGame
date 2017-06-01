@@ -11,8 +11,6 @@ public class Command implements Serializable {
     public enum Type{
         START,
         CHANGE_DIRECTION,
-        MAP,
-        TIME,
         SHUTDOWN
     }
 

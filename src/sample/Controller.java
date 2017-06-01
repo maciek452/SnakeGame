@@ -37,7 +37,8 @@ public class Controller implements Initializable{
     private DataOutputStream outputStream;
     private DataInputStream inputStream;
     public GraphicsContext gc;
-    int width, height, number_of_players = 0;
+    private static int width, height, number_of_players = 0;
+    private static int[] scores = new int[3];
     double blockSize;
     Image earth_pic, wall_pic, apple_pic;
     Image[] tail_pic, headUp_pic, headDown_pic, headLeft_pic, headRight_pic;
@@ -134,11 +135,19 @@ public class Controller implements Initializable{
             }
         }
     }
-
     private void setScores(Command command){
-        Platform.runLater(()->player1.setText( format("%d",command.score1*100)));
-        Platform.runLater(()->player2.setText( format("%d",command.score2*100)));
-        Platform.runLater(()->player3.setText( format("%d",command.score3*100)));
+        if(command.score1!= scores[0]) {
+            Platform.runLater(() -> player1.setText(format("%d", command.score1 * 100)));
+            scores[0] = command.score1;
+        }
+        if(command.score2!= scores[1]) {
+            Platform.runLater(() -> player1.setText(format("%d", command.score2 * 100)));
+            scores[1] = command.score2;
+        }
+        if(command.score3!= scores[2]) {
+            Platform.runLater(() -> player1.setText(format("%d", command.score3 * 100)));
+            scores[2] = command.score3;
+        }
     }
 
     public synchronized void getChangesFromServer(){
@@ -264,7 +273,7 @@ public class Controller implements Initializable{
         gc.setFill(Color.GREEN);
         gc.setStroke(Color.DARKGREEN);
         for(int i = 0; i <mapa.length(); i++)
-            if(mapa.charAt(i)=='.')
+            if(mapa.charAt(i)!=' ')
                 setImage(new Payload(new Point(i%width, i/width),' '));
 
         for (int i = 0; i < height; i++)

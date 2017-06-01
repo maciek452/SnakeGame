@@ -35,7 +35,6 @@ public class Server{
     public static void main(String[] args)throws IOException{
         map = new Map(height, width);
         log.info("Server starts.");
-
         terminate();
         endTime = System.currentTimeMillis() + time;
         while(true) {
@@ -159,8 +158,8 @@ public class Server{
         int length;
         try {
             log.info("Receiving from client"+numberOfSnakes);
-
-            while (true) {
+            boolean exit  =false;
+            while (!exit) {
                 //oczekiwanie na kolejną komendę
                 length = inputStream.readInt();
                 message = new byte[length];
@@ -184,10 +183,11 @@ public class Server{
                         map.startAppleTask();
                         break;
                     case SHUTDOWN:
-                        log.info("Player disconnected.");
+//                        log.info("Player disconnected.");
 //                        snake.disable();
 //                        snake.deleteSnake(map);
 //                        numberOfSnakes--;
+                        exit = true;
                         break;
                 }
             }
