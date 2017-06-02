@@ -162,7 +162,9 @@ public class Controller implements Initializable{
     }
 
     private void showScore(){
-        if(scores[0]>scores[1] && scores[0]>scores[2])
+        if( (scores[0]> scores[1] && scores[0]==scores[2])|| (scores[1]> scores[2] && scores[1]==scores[2]) || (scores[0]> scores[2] && scores[0]==scores[1]))
+            JOptionPane.showMessageDialog(null, "Remis");
+        else if(scores[0]>scores[1] && scores[0]>scores[2])
             JOptionPane.showMessageDialog(null, "Wygrał gracz nr1");
         else if (scores[1]>scores[0] && scores[1]>scores[2])
             JOptionPane.showMessageDialog(null, "Wygrał gracz nr2");
