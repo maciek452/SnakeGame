@@ -48,6 +48,7 @@ public class Controller implements Initializable{
     String ip;
     static long endTime;
     static boolean clock = false;
+    private static boolean gameFinished = false;
     private static final int PORT = 1337;
 
     @Override
@@ -79,14 +80,19 @@ public class Controller implements Initializable{
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             log.info("Can't find class inputStream.");
+        }catch (NullPointerException e){
+            log.info("Brak polaczenia z serwerem");
+            System.exit(0);
         }
     }
     @FXML
     public void handle(KeyEvent event) throws IOException{
         try {
-            byte[] message = Serializer.serialize(new Command(Command.Type.CHANGE_DIRECTION, event.getCode()));
-            outputStream.writeInt(message.length);
-            outputStream.write(message);
+            if(!gameFinished) {
+                byte[] message = Serializer.serialize(new Command(Command.Type.CHANGE_DIRECTION, event.getCode()));
+                outputStream.writeInt(message.length);
+                outputStream.write(message);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -133,21 +139,19 @@ public class Controller implements Initializable{
     }
 
     public void countdown() {
+        log.info("time: " + endTime);
+        timeLeft = (endTime - System.currentTimeMillis());
         while (true) {
             if (clock == true) {
-                timeLeft = (endTime - System.currentTimeMillis()) > 0 ? (endTime - System.currentTimeMillis()) : 0 ;
-                Platform.runLater(() ->
-                        Stoper.setText(format("%02d:%02d:%03d", timeLeft / 60000, (timeLeft / 1000) % 60, timeLeft % 1000)));
                 if(timeLeft<=0)
                 {
-                    if(command.score1*100>command.score2 && command.score1*100>command.score3)
-                        JOptionPane.showMessageDialog(null, "Wygrał gracz nr1");
-                    else if (command.score2*100>command.score1 && command.score2*100>command.score3)
-                        JOptionPane.showMessageDialog(null, "Wygrał gracz nr2");
-                    else
-                        JOptionPane.showMessageDialog(null, "Wygrał gracz nr3");
-                    System.exit(0);
+                    Platform.runLater(() ->
+                            Stoper.setText("00:00:000"));
+                    return;
                 }
+                timeLeft = (endTime - System.currentTimeMillis());
+                Platform.runLater(() ->
+                        Stoper.setText(format("%02d:%02d:%03d", timeLeft / 60000, (timeLeft / 1000) % 60, timeLeft % 1000)));
             }
             try {
                 Thread.sleep(9);
@@ -155,6 +159,16 @@ public class Controller implements Initializable{
                 e.printStackTrace();
             }
         }
+    }
+
+    private void showScore(){
+        if(scores[0]>scores[1] && scores[0]>scores[2])
+            JOptionPane.showMessageDialog(null, "Wygrał gracz nr1");
+        else if (scores[1]>scores[0] && scores[1]>scores[2])
+            JOptionPane.showMessageDialog(null, "Wygrał gracz nr2");
+        else
+            JOptionPane.showMessageDialog(null, "Wygrał gracz nr3");
+        System.exit(0);
     }
     private void setScores(Command command){
         if(command.score1!= scores[0]) {
@@ -186,6 +200,14 @@ public class Controller implements Initializable{
                     } else {
                         mapa = updateString(mapa, command.getString());
                     }
+                } else if(command.getType() == Command.Type.SHUTDOWN){
+                    synchronized (this){
+                        gameFinished = true;
+                    }
+                    log.info("shutdown message recived");
+                    inputStream.close();
+                    outputStream.close();
+                    showScore();
                 }
             }
         }catch (IOException e){

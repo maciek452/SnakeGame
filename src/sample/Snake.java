@@ -11,7 +11,7 @@ import java.util.Vector;
  */
 public class Snake {
 
-    private int snakeId;
+    public int snakeId;
     private static boolean[] isSnakeIdTaken = new boolean[3];
     private static SnakeChar snakeChar = new SnakeChar();
     Vector<Point> pieces = new Vector<Point>();
